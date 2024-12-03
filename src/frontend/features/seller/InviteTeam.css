@@ -1,0 +1,199 @@
+/* General Layout for Invite Team */
+.invite-team-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #f8f8f8;
+    width: 100%;
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  /* Back Button - Positioned at the top left with a square box */
+  .back-button-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #4CAF50;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    color: white;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .back-button-container:hover {
+    background-color: #45a049;
+  }
+  
+  /* Invite Input Section */
+  .invite-input {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .invite-input input {
+    padding: 10px;
+    margin-right: 10px;
+    width: 300px;
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  .invite-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .invite-button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Table Styling */
+  .team-table {
+    margin-top: 20px;
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .team-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .team-table th,
+  .team-table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .team-table th {
+    background-color: #f1f1f1;
+  }
+  
+  .team-table td {
+    word-wrap: break-word;
+  }
+  
+  .team-table td.email {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Pending Invites Table Styling */
+  .pending-invites-table {
+    margin-top: 20px;
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .pending-invites-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .pending-invites-table th,
+  .pending-invites-table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .pending-invites-table th {
+    background-color: #f1f1f1;
+  }
+  
+  .pending-invites-table td {
+    word-wrap: break-word;
+  }
+  
+  /* Button Styling inside the tables */
+  button {
+    padding: 8px 16px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  button:hover {
+    background-color: #e53935;
+  }
+  
+  /* Confirm Button Styling */
+  .confirm-button-container {
+    margin-top: 20px;
+  }
+  
+  .confirm-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .confirm-button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Responsive Layout */
+  @media (max-width: 768px) {
+    .invite-input input {
+      width: 100%;
+    }
+  
+    .invite-button {
+      width: 100%; /* Full-width button */
+      padding: 12px 0;
+    }
+  
+    .team-table table,
+    .pending-invites-table table {
+      width: 100%;
+    }
+  
+    .team-table th,
+    .team-table td,
+    .pending-invites-table th,
+    .pending-invites-table td {
+      font-size: 14px;
+      padding: 8px;
+    }
+  
+    .team-table td.email {
+      max-width: 100px;
+    }
+  
+    .confirm-button-container,
+    .back-button-container {
+      width: 100%;
+      margin-top: 15px;
+    }
+  
+    .confirm-button,
+    .back-button-container {
+      width: 100%; /* Full-width buttons */
+      padding: 12px 0;
+    }
+  }
+  
