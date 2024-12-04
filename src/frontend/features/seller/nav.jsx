@@ -19,7 +19,8 @@ const NavWrapper = styled.nav`
 const NavLink = styled(Link)`
   color: #676D75;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center; /* Keep icon and label stacked vertically */
@@ -45,22 +46,22 @@ const NavIcon = styled.div`
 
 const HomeIcon = styled(NavIcon)`
   font-size: 1.8rem;  /* Larger size for Home */
-  margin-bottom: -13px;
+  margin-bottom: -3px;
 `;
 
 const InventoryIcon = styled(NavIcon)`
   font-size: 1.9rem;  /* Slightly larger size for Inventory */
-  margin-bottom: -16px;
+  margin-bottom: -6px;
 `;
 
 const HistoryIcon = styled(NavIcon)`
   font-size: 1.5rem;  /* Custom size for History */
-  margin-bottom: -8px;
+  margin-bottom: -1px;
 `;
 
 const ProfileIcon = styled(NavIcon)`
-  font-size: 1.4rem;  /* Smaller size for Profile */
-  margin-bottom: -6px;
+  font-size: 1.5rem;  /* Smaller size for Profile */
+  margin-bottom: -1px;
 `;
 
 const Label = styled.div`

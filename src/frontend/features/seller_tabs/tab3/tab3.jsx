@@ -148,21 +148,68 @@ const Tab3 = ({ userEmail, userTeamEmails }) => {
       return;
     }
 
-    const duplicatedItem = {
-      name: item.name,
-      quantity: item.quantity,
-      price: item.price,
-      email: userEmail,
-      created_at: new Date().toISOString(),
-      inventory_id: item.id,
-    };
-
     try {
+      // Fetch the team_num for the logged-in user using the invite column
+      const { data: teamData, error: teamError } = await supabase
+        .from("team")
+        .select("team_num")
+        .eq("invite", userEmail) // Use 'invite' instead of 'email'
+        .single();
+
+      if (teamError) {
+        console.error("Error fetching team number:", teamError.message);
+        setFeedbackMessage("Failed to fetch team information.");
+        return;
+      }
+
+      const teamNum = teamData?.team_num;
+
+      if (!teamNum) {
+        setFeedbackMessage("Team number not found for the user.");
+        return;
+      }
+
+      // Check if the item already has the inventory_id
+      let inventoryId = item.inventory_id;
+
+      if (!inventoryId) {
+        const { data: inventoryData, error: inventoryError } = await supabase
+          .from("inventory")
+          .select("id")
+          .eq("name", item.name)
+          .single();
+
+        if (inventoryError) {
+          console.error("Error fetching inventory item:", inventoryError.message);
+          setFeedbackMessage("Failed to fetch inventory item.");
+          return;
+        }
+
+        inventoryId = inventoryData?.id;
+
+        if (!inventoryId) {
+          setFeedbackMessage("Inventory item not found.");
+          return;
+        }
+      }
+
+      // Prepare the duplicated item with the team_num included
+      const duplicatedItem = {
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        email: userEmail,
+        team_num: teamNum, // Include the team_num
+        created_at: new Date().toISOString(),
+        inventory_id: inventoryId,
+      };
+
+      // Insert the duplicated item into the add_cart table
       const { error } = await supabase.from("add_cart").insert([duplicatedItem]);
 
       if (error) {
         console.error("Error duplicating item:", error.message);
-        setFeedbackMessage("Already added to cart. Please try again.");
+        setFeedbackMessage("Failed to add item to cart. Please try again.");
         return;
       }
 
@@ -172,6 +219,7 @@ const Tab3 = ({ userEmail, userTeamEmails }) => {
       setFeedbackMessage("An unexpected error occurred. Please try again.");
     }
   };
+
 
   const handleNavigateToReview = async () => {
     try {
@@ -220,6 +268,7 @@ const Tab3 = ({ userEmail, userTeamEmails }) => {
               />
               <div className="item-text-container">
                 <p className="item-title">{item.name}</p>
+                <p className="inv-item-quantity">Qty: {item.quantity}</p>
                 <p className="item-price">Price: ₱{item.price}</p>
                 <AiOutlinePlus
                   className="duplicate-icon"

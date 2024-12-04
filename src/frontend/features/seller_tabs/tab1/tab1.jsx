@@ -241,17 +241,35 @@ const Tab1 = ({ isEditing, handleEditMode }) => {
       return;
     }
 
-    // Check if the item already has the inventory_id
-    let inventoryId = item.inventory_id;
+    try {
+      // Fetch the team_num for the logged-in user using the invite column
+      const { data: teamData, error: teamError } = await supabase
+        .from("team")
+        .select("team_num")
+        .eq("invite", userEmail) // Use 'invite' instead of 'email'
+        .single();
 
-    // If inventory_id is not present, fetch it from the inventory table
-    if (!inventoryId) {
-      try {
-        // Assuming item has a unique name or other identifier
+      if (teamError) {
+        console.error("Error fetching team number:", teamError.message);
+        setFeedbackMessage("Failed to fetch team information.");
+        return;
+      }
+
+      const teamNum = teamData?.team_num;
+
+      if (!teamNum) {
+        setFeedbackMessage("Team number not found for the user.");
+        return;
+      }
+
+      // Check if the item already has the inventory_id
+      let inventoryId = item.inventory_id;
+
+      if (!inventoryId) {
         const { data: inventoryData, error: inventoryError } = await supabase
-          .from('inventory')
-          .select('id')  // Select the id from the inventory table
-          .eq('name', item.name)  // Assuming name is unique; adjust if needed
+          .from("inventory")
+          .select("id")
+          .eq("name", item.name)
           .single();
 
         if (inventoryError) {
@@ -260,35 +278,31 @@ const Tab1 = ({ isEditing, handleEditMode }) => {
           return;
         }
 
-        inventoryId = inventoryData?.id;  // If found, assign the inventory id
+        inventoryId = inventoryData?.id;
 
         if (!inventoryId) {
           setFeedbackMessage("Inventory item not found.");
           return;
         }
-      } catch (err) {
-        console.error("Unexpected error fetching inventory:", err.message);
-        setFeedbackMessage("An unexpected error occurred while fetching inventory.");
-        return;
       }
-    }
 
-    // Proceed with duplicating the item into the cart
-    const duplicatedItem = {
-      name: item.name,
-      quantity: item.quantity,
-      price: item.price,
-      email: userEmail,
-      created_at: new Date().toISOString(),
-      inventory_id: inventoryId,  // Pass the correct inventory_id
-    };
+      // Prepare the duplicated item with the team_num included
+      const duplicatedItem = {
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        email: userEmail,
+        team_num: teamNum, // Include the team_num
+        created_at: new Date().toISOString(),
+        inventory_id: inventoryId,
+      };
 
-    try {
+      // Insert the duplicated item into the add_cart table
       const { error } = await supabase.from("add_cart").insert([duplicatedItem]);
 
       if (error) {
         console.error("Error duplicating item:", error.message);
-        setFeedbackMessage("Already added to cart. Please try again.");
+        setFeedbackMessage("Failed to add item to cart. Please try again.");
         return;
       }
 
@@ -298,7 +312,6 @@ const Tab1 = ({ isEditing, handleEditMode }) => {
       setFeedbackMessage("An unexpected error occurred. Please try again.");
     }
   };
-
 
 
   // Fetch cart items to navigate to the ReviewPage

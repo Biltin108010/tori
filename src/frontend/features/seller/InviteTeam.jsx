@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import supabase from "../../../backend/supabaseClient"; // Import your Supabase client
 import { useNavigate } from "react-router-dom"; // For navigating between pages
+import "./InviteTeam.css"
 
 function InviteTeam() {
   const [emailInput, setEmailInput] = useState(""); // Input field for inviting email
@@ -20,60 +21,63 @@ function InviteTeam() {
   const fetchTeamData = async () => {
     try {
       setLoading(true);
-
-      // Fetch current user's team number
+  
+      // Fetch current user's team number (if any)
       const { data: teamInfo, error: teamError } = await supabase
         .from("team")
         .select("team_num")
         .eq("invite", currentUserEmail)
         .limit(1);
-
+  
       if (teamError) {
         console.error("Error fetching team number:", teamError.message);
         return;
       }
-
-      const teamNum = teamInfo?.[0]?.team_num || currentTeamNum;
-      setCurrentTeamNum(teamNum);
-
-      // Fetch all members with the same team number
-      const { data: teamData, error: teamDataError } = await supabase
-        .from("team")
-        .select("invite, approved, team_num, inviter") // Select inviter too
-        .eq("team_num", teamNum);
-
-      if (teamDataError) throw teamDataError;
-
-      setTeamData(teamData);
-
-      // Fetch only the pending invites where approved is false and the invite is for the current user
-      const pending = teamData.filter((member) => member.invite === currentUserEmail && !member.approved);
-      setPendingInvites(pending);
-
-      // Check if the current user is already invited
-      const userAlreadyInvited = teamData.some((member) => member.invite === currentUserEmail);
-      setIsAlreadyInvited(userAlreadyInvited);
-
-      // Check if the current user is the inviter and their approval status
-      const user = teamData.find((member) => member.invite === currentUserEmail);
-      setIsInviter(user?.inviter);
-      setIsApproved(user?.approved);
-
-      // Check if the team is full (i.e., has 3 or more approved members)
-      const teamSize = teamData.filter((member) => member.approved).length;
-      if (teamSize >= 3) {
-        alert("Your team is already full!");
-        return;
+  
+      if (teamInfo?.length === 0) {
+        // No team found for the current user, so they are allowed to create a new team
+        setCurrentTeamNum(null);
+        setIsInviter(true); // User is the inviter
+        setCanInvite(true); // They can invite others to form a new team
+      } else {
+        // Existing team, handle normally
+        const teamNum = teamInfo?.[0]?.team_num || currentTeamNum;
+        setCurrentTeamNum(teamNum);
+  
+        // Fetch all members of the team
+        const { data: teamData, error: teamDataError } = await supabase
+          .from("team")
+          .select("invite, approved, team_num, inviter")
+          .eq("team_num", teamNum);
+  
+        if (teamDataError) throw teamDataError;
+  
+        setTeamData(teamData);
+  
+        // Filter pending invites where approved is false
+        const pendingInvitesData = teamData.filter(member => member.approved === false);
+        setPendingInvites(pendingInvitesData);
+        
+  
+        // Check if the user has been invited already or is an inviter
+        const user = teamData.find((member) => member.invite === currentUserEmail);
+        setIsInviter(user?.inviter || false);
+        setIsApproved(user?.approved || false);
+        
+        // Check if the team is full
+        const teamSize = teamData.filter((member) => member.approved).length;
+        setIsTeamFull(teamSize >= 4); // Assuming a team can have up to 4 members
+        
+        setCanInvite(!(user?.inviter === false && user?.approved === false));
       }
-
-      // Disable the invite button if the user is invited but not an inviter
-      setCanInvite(!(user?.inviter === false && user?.approved === false));
     } catch (err) {
       console.error("Error fetching team data:", err.message);
     } finally {
       setLoading(false);
     }
   };
+  
+  
 
   // Get the current user
   useEffect(() => {
@@ -97,6 +101,7 @@ function InviteTeam() {
   }, [currentUserEmail]);
 
   // Handle sending an invite
+// Handle sending an invite
 // Handle sending an invite
 const handleInvite = async () => {
   if (!emailInput.trim()) {
@@ -202,6 +207,7 @@ const handleInvite = async () => {
 
 
 
+
   // Handle approval status change
   const handleApprovalChange = async (invite, value) => {
     try {
@@ -292,8 +298,15 @@ const handleInvite = async () => {
 
   return (
     <div>
+      {/* Back Button */}
+      <div className="inviteback-button-container">
+        <button className="inviteback-button" onClick={() => navigate(-1)}>
+          &lt;
+        </button>
+      </div>
+  
       {/* Render Pending Invites for Invited User */}
-      {pendingInvites.length > 0 && !isTeamFull && (
+      {!isInviter && pendingInvites.length > 0 && !isTeamFull && (
         <div>
           <h2>Pending Invites</h2>
           <table>
@@ -319,7 +332,7 @@ const handleInvite = async () => {
           </table>
         </div>
       )}
-
+  
       {/* Render Team Members */}
       <div>
         <h2>Team Members</h2>
@@ -339,11 +352,9 @@ const handleInvite = async () => {
                   <td>{member.invite}</td>
                   <td>{member.approved ? "Approved" : "Pending"}</td>
                   <td>
-                    {/* Show "Remove" only if the current user is the inviter */}
                     {isInviter && member.invite !== currentUserEmail && (
                       <button onClick={() => handleRemoveAccount(member.invite)}>Remove</button>
                     )}
-                    {/* Show "Leave Team" or "Disband Team" depending on current user's status */}
                     {member.invite === currentUserEmail && !isInviter && (
                       <button onClick={handleLeaveTeam}>Leave Team</button>
                     )}
@@ -357,28 +368,24 @@ const handleInvite = async () => {
           </table>
         )}
       </div>
-
+  
       {/* Invite Form */}
-      <div>
-        <input
-          type="email"
-          value={emailInput}
-          onChange={(e) => setEmailInput(e.target.value)}
-          disabled={!canInvite || isTeamFull}
-          placeholder="Enter email to invite"
-        />
-        <button onClick={handleInvite} disabled={!canInvite || isTeamFull}>
-          Send Invite
-        </button>
-      </div>
-
-      <div className="back-button-container">
-        <button className="back-button" onClick={() => navigate(-1)}>
-          &lt; Back
-        </button>
-      </div>
+      {isInviter && !isTeamFull && (
+        <div className="invite-form-container">
+          <input
+            type="email"
+            value={emailInput}
+            onChange={(e) => setEmailInput(e.target.value)}
+            disabled={!canInvite || isTeamFull}
+            placeholder="Enter email to invite"
+          />
+          <button onClick={handleInvite} disabled={!canInvite || isTeamFull}>
+            Send Invite
+          </button>
+        </div>
+      )}
     </div>
-  );
+  );  
 }
 
 export default InviteTeam;

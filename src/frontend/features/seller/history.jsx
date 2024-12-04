@@ -212,7 +212,7 @@ function History() {
           <div key={item.name} className="history-item">
             <FaCartPlus size={24} className="item-icon" />
             <div className="item-details">
-              <div className="title">Name: {item.name}</div>
+              <div className="hist-title">Name: {item.name}</div>
               <div className="sub-title">Email: {item.email}</div>
             </div>
             <div className="amount-date">

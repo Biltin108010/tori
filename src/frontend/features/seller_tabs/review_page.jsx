@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import supabase from "../../../../src/backend/supabaseClient"; // Ensure Supabase is set up correctly
+import supabase from "../../../../src/backend/supabaseClient";
+import { useUser } from "../../../../src/backend/UserContext"; // Ensure Supabase is set up correctly
 import { IoIosArrowBack } from "react-icons/io";
 import styled from "styled-components"; // Import styled-components
 import "./review_page.css"; // Your CSS file for styling
@@ -17,51 +18,88 @@ const BackButton = styled(IoIosArrowBack)`
   }
 `;
 
-const ReviewPage = ({ userEmail }) => {
+const ReviewPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { user } = useUser(); // Get the user from context
+    const userEmail = user?.email; // Extract email from the user context
 
-    const [orderItems, setOrderItems] = useState([]); // Initialize with an empty array
-    const [feedbackMessage, setFeedbackMessage] = useState(""); // For feedback messages
+    const [orderItems, setOrderItems] = useState([]);
+    const [feedbackMessage, setFeedbackMessage] = useState("");
 
-    // Fetch order items from either location.state or the database
+    // Fetch cart items based on user's team
     useEffect(() => {
         const fetchCartItems = async () => {
-            if (location.state?.items) {
+            if (!userEmail) {
+                setFeedbackMessage("User is not authenticated.");
+                return;
+            }
+
+            try {
+                // Get team number for the user
+                const { data: teamData, error: teamError } = await supabase
+                    .from("team")
+                    .select("team_num")
+                    .eq("invite", userEmail)
+                    .single();
+
+                if (teamError || !teamData) {
+                    setFeedbackMessage("Failed to fetch team information.");
+                    return;
+                }
+
+                const teamNum = teamData.team_num;
+
+                // Fetch items for all team members
+                const { data: itemsData, error: itemsError } = await supabase
+                    .from("add_cart")
+                    .select("*")
+                    .eq("team_num", teamNum);
+
+                if (itemsError) {
+                    setFeedbackMessage("Failed to fetch team cart items.");
+                    return;
+                }
+
                 setOrderItems(
-                    location.state.items.map((item) => ({
+                    (itemsData || []).map((item) => ({
                         ...item,
-                        counter: 1, // Initialize counters to 1 for all items
+                        counter: 1,
                     }))
                 );
-            } else {
-                try {
-                    const { data, error } = await supabase
-                        .from("add_cart")
-                        .select("*")
-                        .eq("email", userEmail);
-
-                    if (error) {
-                        console.error("Error fetching cart items:", error.message);
-                        setFeedbackMessage("Failed to fetch cart items.");
-                        return;
-                    }
-
-                    setOrderItems(
-                        (data || []).map((item) => ({
-                            ...item,
-                            counter: 1, // Initialize counters to 1 for fetched items
-                        }))
-                    );
-                } catch (err) {
-                    console.error("Unexpected error:", err.message);
-                    setFeedbackMessage("An unexpected error occurred while fetching items.");
-                }
+            } catch (err) {
+                console.error("Error fetching cart items:", err.message);
+                setFeedbackMessage("An unexpected error occurred.");
             }
         };
 
         fetchCartItems();
-    }, [location.state, userEmail]);
+    }, [userEmail]);
+
+    const handleRemoveItem = async (itemId) => {
+        try {
+            // Remove item from database
+            const { error } = await supabase
+                .from("add_cart")
+                .delete()
+                .eq("inventory_id", itemId);
+
+            if (error) {
+                console.error("Error removing item:", error.message);
+                setFeedbackMessage("Failed to remove the item. Please try again.");
+                return;
+            }
+
+            // Remove item from state
+            const updatedItems = orderItems.filter((item) => item.inventory_id !== itemId);
+            setOrderItems(updatedItems);
+
+            setFeedbackMessage("Item removed successfully.");
+        } catch (err) {
+            console.error("Unexpected error:", err.message);
+            setFeedbackMessage("An unexpected error occurred while removing the item.");
+        }
+    };
 
     const handleCounterChange = (index, delta) => {
         const item = orderItems[index];
@@ -128,24 +166,24 @@ const ReviewPage = ({ userEmail }) => {
 
     return (
         <div className="review-container">
-    {feedbackMessage && (
-        <div className="feedback-message">
-            <p>{feedbackMessage}</p>
-        </div>
-    )}
-    <div className="review-header">
-        <div className="back-logo-container">
-            <div className="back-button-container" onClick={() => navigate(-1)}>
-                <BackButton />
+            {feedbackMessage && (
+                <div className="feedback-message">
+                    <p>{feedbackMessage}</p>
+                </div>
+            )}
+            <div className="review-header">
+                <div className="back-logo-container">
+                    <div className="back-button-container" onClick={() => navigate(-1)}>
+                        <BackButton />
+                    </div>
+                    <img
+                        src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png"
+                        alt="Logo"
+                        className="header-logo"
+                    />
+                </div>
+                <h1 className="review-title">Review Order</h1>
             </div>
-            <img
-                src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png"
-                alt="Logo"
-                className="header-logo"
-            />
-        </div>
-        <h1 className="review-title">Review Order</h1>
-    </div>
             <div className="seller-info">
                 <span className="seller-label">Seller</span>
                 <span className="seller-name">Person 1</span>
@@ -174,7 +212,12 @@ const ReviewPage = ({ userEmail }) => {
                                 </button>
                             </div>
                         </div>
-                        <button className="remove-item">Remove</button>
+                        <button
+                            className="remove-item"
+                            onClick={() => handleRemoveItem(item.inventory_id)}
+                        >
+                            Remove
+                        </button>
                     </div>
                 ))}
             </div>
