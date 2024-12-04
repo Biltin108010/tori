@@ -1,0 +1,29 @@
+.view-item-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .view-item-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .view-item-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .view-item-text {
+    font-size: 16px;
+    color: #333;
+  }
+  
