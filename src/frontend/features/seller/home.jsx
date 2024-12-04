@@ -88,13 +88,13 @@ function Home() {
 
   return (
     <div className="home-page-container">
-      {/* Header */}
-      <div className="home-page-header">
-        <h1 className="home-title">Home</h1>
-        <div className="logo">
-          <img src="/images/tori_logo2.png" alt="Logo" width={68} height={68} />
-        </div>
+    {/* Header */}
+    <div className="home-page-header">
+      <h1 className="home-title">Home</h1>
+      <div className="home-logo-container">
+        <img src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png" alt="Logo" className="home-logo" />
       </div>
+    </div>
 
       <div className="home-divider"></div>
 
@@ -151,7 +151,7 @@ function Home() {
 
       {/* Total Profit Section */}
       <div className="home-profit-section">
-        <h2 className="section-title">Total Profit</h2>
+        <h2 className="home-section-title">Total Profit</h2>
         <div className="home-profit-cards">
           {profitData.map((item, index) => (
             <div className="home-profit-card" key={index}>

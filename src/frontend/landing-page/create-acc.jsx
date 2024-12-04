@@ -4,6 +4,7 @@ import supabase from '../../backend/supabaseClient'; // Import Supabase client
 import { Eye, EyeOff } from 'lucide-react';
 import './landing-page.css'; // Ensure the styling is included
 
+
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -55,7 +56,7 @@ const SignupPage = () => {
         {/* Logo */}
         <div className="logo">
           <img
-            src="/images/tori_logo2.png"
+            src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png"
             alt="Logo"
             width={68}
             height={68}
@@ -179,14 +180,8 @@ const SignupPage = () => {
             <span className="divider-text">Or Register with</span>
           </div>
           <div className="social-icons">
-            <div className="social-icon facebook">
-              <i className="fab fa-facebook-f"></i>
-            </div>
             <div className="social-icon google">
               <i className="fab fa-google"></i>
-            </div>
-            <div className="social-icon apple">
-              <i className="fab fa-apple"></i>
             </div>
           </div>
         </div>

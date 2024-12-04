@@ -1,32 +1,39 @@
 /* General Container */
+.root {
+  background-color: #FBFBFB;
+}
+
 .tab-container {
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: auto;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
   margin-bottom: 50px;
 }
 
 /* Header */
 .tab-container .header {
   display: flex;
+  flex-direction: column; /* Stack content vertically */
   justify-content: center;
   padding: 16px;
-  border-bottom: 1px solid #ddd;
 }
 
 .tab-container .header-wrapper {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Space out the content */
+  justify-content: space-between; /* Space out title and logo */
   width: 100%;
-  max-width: 1200px; /* Limit the max width of the header */
+  max-width: 1200px;
 }
 
+.tab-container .title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Align title and logo in a row */
+  width: 100%;  /* Take full width */
+}
 
 .tab-container .title h2 {
   margin: 0;
@@ -34,7 +41,19 @@
   font-family: "Poppins", serif;
   font-weight: 800;
   font-style: normal;
-  padding-bottom: 5px; /* Add space below the title */
+  padding-bottom: 5px;
+  flex-grow: 1; /* Allow title to take up remaining space */
+}
+
+.tab-container .tabscontentlogo {
+  display: flex;
+  justify-content: flex-end;
+  width: 50px;
+}
+
+.tab-container .tabscontentlogo img {
+  width: 50px;
+  height: 50px;
 }
 
 /* Search Box Wrapper */
@@ -43,11 +62,13 @@
   align-items: center;
   justify-content: flex-start;
   gap: 12px;
-  padding-top: 10px; /* Space between title and search box */
+  padding-top: 10px;
   width: 100%;
+  margin-top: 10px;
 }
 
 .tab-container .search-input {
+  font-family: 'Inter', sans-serif;
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -63,16 +84,19 @@
 /* Edit Button */
 .tab-container .edit-button {
   padding: 12px 40px;
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: #fff;
-  background-color: #000; /* Black background */
+  background-color: #333; /* Black background */
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  margin-left: 10px; /* Space between search bar and edit button */
   z-index: 10;
 }
+
 
 .edit-button {
   margin-top: -10px;
@@ -109,39 +133,50 @@
 }
 
 /* Tabs */
-.tab-container .tabs {
+.tab-container .tabs{
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
-  padding: 8px;
-  background-color: #f9f9f9;
+  gap: 0; /* No gap between tabs */
+  padding: 0px;
+  background-color: #e0dfdf; /* Light gray background for the container */
+  border-radius: 8px; /* Smooth edges for the container */
+  overflow: hidden; /* Prevents child overflow for rounded corners */
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-top: -5px;
 }
 
 .tab-container .tab {
-  padding: 10px 0;
+  padding: 12px 0;
   text-align: center;
   font-size: 14px;
   font-weight: 600;
-  color: #555;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  color: #333; /* Default text color */
+  background-color: transparent; /* Transparent to match container background */
+  border: none;
+  border-right: 1px solid #ffffff; 
   cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
 
+.tab-container .tab:last-child {
+  border-right: none; /* Removes the right border for the last tab */
+}
+
 .tab-container .tab:hover {
-  background-color: #f2f2f2;
+  background-color: #eaeaea; /* Slightly darker gray for hover effect */
 }
 
 .tab-container .active-tab {
-  background-color: #000;
-  color: #fff;
+  background-color: #333; /* Black background for the active tab */
+  color: #fff; /* White text for the active tab */
+  font-weight: 600;
 }
 
 /* Tab Content */
 .tab-container .tab-content {
-  padding: 16px;
+  padding: 10px;
 }
 
 .tab-container .title {

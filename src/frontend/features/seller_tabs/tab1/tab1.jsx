@@ -35,61 +35,55 @@ const Tab1 = ({ isEditing, handleEditMode }) => {
   // Fetch inventory items for the logged-in user
   const fetchItems = async () => {
     if (!userEmail) return; // Wait until the email is set
-  
+
     const { data, error } = await supabase
       .from("inventory") // Replace with your actual table name
       .select("*")
       .eq("email", userEmail); // Fetch only items belonging to the logged-in user
-  
+
     if (error) {
       console.error("Error fetching items:", error.message);
       setFeedbackMessage("Failed to fetch items. Please try again later.");
     } else {
       // Sort items alphabetically by name
-      const sortedItems = (data || []).sort((a, b) => 
+      const sortedItems = (data || []).sort((a, b) =>
         a.name.localeCompare(b.name)
       );
-  
+
       setItems(sortedItems);
     }
   };
 
-useEffect(() => {
-  fetchItems(); // Call fetchItems to get the latest data
-}, [userEmail]);
+  useEffect(() => {
+    fetchItems(); // Call fetchItems to get the latest data
+  }, [userEmail]);
 
-const handleAddProduct = async (newItem) => {
-  if (!userEmail) {
-    setFeedbackMessage("You must be logged in to add a product.");
-    return;
-  }
-
-  const itemWithEmail = { ...newItem, email: userEmail };
-
-  try {
-    const { error } = await supabase
-      .from("inventory") // Replace with your actual table name
-      .insert([itemWithEmail]);
-
-    if (error) {
-      console.error("Error adding item to database:", error.message);
-      setFeedbackMessage("Failed to add the product. Please try again.");
+  const handleAddProduct = async (newItem) => {
+    if (!userEmail) {
+      setFeedbackMessage("You must be logged in to add a product.");
       return;
     }
 
-    await fetchItems(); // Fetch the latest items
-    setIsModalOpen(false);
-    setFeedbackMessage("Product successfully added!");
-  } catch (err) {
-    console.error("Unexpected error:", err.message);
-    setFeedbackMessage("An unexpected error occurred. Please try again.");
-  }
-};
+    const itemWithEmail = { ...newItem, email: userEmail };
 
+    try {
+      const { error } = await supabase
+        .from("inventory") // Replace with your actual table name
+        .insert([itemWithEmail]);
 
-  const handleNavigateToReview = () => {
-    // Navigate to the Review page and pass the items as state
-    navigate('/seller/review', { state: { items } });
+      if (error) {
+        console.error("Error adding item to database:", error.message);
+        setFeedbackMessage("Failed to add the product. Please try again.");
+        return;
+      }
+
+      await fetchItems(); // Fetch the latest items
+      setIsModalOpen(false);
+      setFeedbackMessage("Product successfully added!");
+    } catch (err) {
+      console.error("Unexpected error:", err.message);
+      setFeedbackMessage("An unexpected error occurred. Please try again.");
+    }
   };
 
   const handleEditProduct = async (updatedItem) => {
@@ -102,39 +96,39 @@ const handleAddProduct = async (newItem) => {
           price: updatedItem.price,
         })
         .eq("id", updatedItem.id);
-  
+
       if (error) {
         console.error("Error updating item:", error.message);
         setFeedbackMessage("Failed to update the product. Please try again.");
         return;
       }
-  
+
       await fetchItems(); // Refresh the data
       setIsModalOpen(false);
-      setFeedbackMessage("Product successfully updated!");
+      setFeedbackMessage("Product Added to Cart!");
     } catch (err) {
       console.error("Unexpected error:", err.message);
       setFeedbackMessage("An unexpected error occurred. Please try again.");
     }
   };
-  
+
 
   const increaseQuantity = async (id) => {
     const item = items.find((i) => i.id === id);
-  
+
     if (item) {
       try {
         const { error } = await supabase
           .from("inventory") // Replace with your actual table name
           .update({ quantity: item.quantity + 1 })
           .eq("id", id);
-  
+
         if (error) {
           console.error("Error increasing quantity:", error.message);
           setFeedbackMessage("Failed to update quantity. Please try again.");
           return;
         }
-  
+
         await fetchItems(); // Refresh the data
         setFeedbackMessage("Quantity successfully increased!");
       } catch (err) {
@@ -143,24 +137,24 @@ const handleAddProduct = async (newItem) => {
       }
     }
   };
-  
+
 
   const decreaseQuantity = async (id) => {
     const item = items.find((i) => i.id === id);
-  
+
     if (item && item.quantity > 1) {
       try {
         const { error } = await supabase
           .from("inventory") // Replace with your actual table name
           .update({ quantity: item.quantity - 1 })
           .eq("id", id);
-  
+
         if (error) {
           console.error("Error decreasing quantity:", error.message);
           setFeedbackMessage("Failed to update quantity. Please try again.");
           return;
         }
-  
+
         await fetchItems(); // Refresh the data
         setFeedbackMessage("Quantity successfully decreased!");
       } catch (err) {
@@ -171,7 +165,7 @@ const handleAddProduct = async (newItem) => {
       setFeedbackMessage("Quantity cannot be less than 1.");
     }
   };
-  
+
 
   const handleItemClick = (item, e) => {
     e.stopPropagation(); // Prevent the click event from firing when the + or - icon is clicked
@@ -240,6 +234,95 @@ const handleAddProduct = async (newItem) => {
     return <Navigate to="/seller/review" />;
   }
 
+
+  const duplicateItem = async (item) => {
+    if (!userEmail) {
+      setFeedbackMessage("You must be logged in to duplicate a product.");
+      return;
+    }
+
+    // Check if the item already has the inventory_id
+    let inventoryId = item.inventory_id;
+
+    // If inventory_id is not present, fetch it from the inventory table
+    if (!inventoryId) {
+      try {
+        // Assuming item has a unique name or other identifier
+        const { data: inventoryData, error: inventoryError } = await supabase
+          .from('inventory')
+          .select('id')  // Select the id from the inventory table
+          .eq('name', item.name)  // Assuming name is unique; adjust if needed
+          .single();
+
+        if (inventoryError) {
+          console.error("Error fetching inventory item:", inventoryError.message);
+          setFeedbackMessage("Failed to fetch inventory item.");
+          return;
+        }
+
+        inventoryId = inventoryData?.id;  // If found, assign the inventory id
+
+        if (!inventoryId) {
+          setFeedbackMessage("Inventory item not found.");
+          return;
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching inventory:", err.message);
+        setFeedbackMessage("An unexpected error occurred while fetching inventory.");
+        return;
+      }
+    }
+
+    // Proceed with duplicating the item into the cart
+    const duplicatedItem = {
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price,
+      email: userEmail,
+      created_at: new Date().toISOString(),
+      inventory_id: inventoryId,  // Pass the correct inventory_id
+    };
+
+    try {
+      const { error } = await supabase.from("add_cart").insert([duplicatedItem]);
+
+      if (error) {
+        console.error("Error duplicating item:", error.message);
+        setFeedbackMessage("Already added to cart. Please try again.");
+        return;
+      }
+
+      setFeedbackMessage("Product successfully added to cart!");
+    } catch (err) {
+      console.error("Unexpected error:", err.message);
+      setFeedbackMessage("An unexpected error occurred. Please try again.");
+    }
+  };
+
+
+
+  // Fetch cart items to navigate to the ReviewPage
+  const handleNavigateToReview = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("add_cart")
+        .select("*")
+        .eq("email", userEmail); // Filter by user email
+
+      if (error) {
+        console.error("Error fetching cart items:", error.message);
+        setFeedbackMessage("Failed to fetch cart items.");
+        return;
+      }
+
+      navigate("/seller/review", { state: { items: data } }); // Pass cart items to ReviewPage
+    } catch (err) {
+      console.error("Unexpected error:", err.message);
+      setFeedbackMessage("An unexpected error occurred.");
+    }
+  };
+
+
   return (
     <div className="tab1-container">
       {feedbackMessage && (
@@ -271,7 +354,7 @@ const handleAddProduct = async (newItem) => {
                 <img
                   src={item.image || "https://via.placeholder.com/100"}
                   alt={item.name}
-                  className="item-image"
+                  className="inv-item-image"
                 />
                 <div className="item-text-container">
                   <p className="item-title">{item.name}</p>
@@ -292,7 +375,7 @@ const handleAddProduct = async (newItem) => {
                       }}
                     />
                   </p>
-                  <p className="item-price">Price: ₱{item.price}</p>
+                  <p className="inv-item-price">Price: ₱{item.price}</p>
                 </div>
               </div>
             ))}
@@ -305,16 +388,20 @@ const handleAddProduct = async (newItem) => {
               <img
                 src={item.image || "https://via.placeholder.com/100"}
                 alt={item.name}
-                className="item-image"
+                className="inv-item-image"
               />
               <div className="item-text-container">
                 <p className="item-title">{item.name}</p>
                 <p className="item-quantity">Qty: {item.quantity}</p>
-                <p className="item-price">Price: ₱{item.price}</p>
+                <p className="inv-item-price">Price: ₱{item.price}</p>
+                <AiOutlinePlus
+                  className="duplicate-icon" // Add custom styling for this icon if needed
+                  onClick={() => duplicateItem(item)}
+                />
               </div>
             </div>
           ))}
-          <button className="review-order-button" onClick={handleNavigateToReview}>
+          <button className="tab1-review-order-button" onClick={handleNavigateToReview}>
             Review Order
           </button>
         </div>

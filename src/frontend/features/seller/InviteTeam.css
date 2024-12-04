@@ -102,7 +102,9 @@
     margin-top: 20px;
     width: 100%;
     overflow-x: auto;
+    border: 2px solid red; /* Add this temporarily for debugging */
   }
+  
   
   .pending-invites-table table {
     width: 100%;

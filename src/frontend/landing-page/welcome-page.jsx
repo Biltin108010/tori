@@ -6,13 +6,13 @@ import styled from 'styled-components';
 export const Wrapper = styled.div`
   min-height: 100vh;
   background-color: #f4f4f4;
-  padding: 0rem;
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  font-family: 'Inter', sans-serif; /* Use Inter font for body text */
+  font-family: 'Inter', sans-serif;
 `;
 
 export const LogoWrapper = styled.div`
@@ -36,7 +36,7 @@ export const Heading = styled.h1`
   font-size: 36px;
   font-weight: bold;
   letter-spacing: -0.015em;
-  font-family: 'Poppins', sans-serif; /* Use Poppins font for headings */
+  font-family: 'Poppins', sans-serif;
 `;
 
 export const Paragraph = styled.p`
@@ -73,21 +73,19 @@ function WelcomeScreen() {
   const navigate = useNavigate();
 
   const navigateToLogin = () => {
-    navigate('/login'); // Navigate to the login page
+    navigate('/login');
   };
 
   const navigateToCreateAccount = () => {
-    navigate('/register'); // Navigate to the create account page
+    navigate('/register');
   };
 
   return (
     <Wrapper>
-      {/* Logo */}
       <LogoWrapper>
-        <Logo src="/images/tori_logo2.png" alt="Tori Logo" />
+        <Logo src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png" alt="Tori Logo" />
       </LogoWrapper>
 
-      {/* Content */}
       <ContentWrapper>
         <Heading>Explore the app</Heading>
         <Paragraph>
@@ -95,7 +93,6 @@ function WelcomeScreen() {
         </Paragraph>
       </ContentWrapper>
 
-      {/* Buttons */}
       <ButtonsWrapper>
         <Button variant="default" onClick={navigateToLogin}>
           Sign In

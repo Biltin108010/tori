@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaHome, FaBox, FaHistory, FaUser } from 'react-icons/fa'; // For icons
+import { FaHome, FaBoxOpen, FaHistory, FaUser, FaHouseUser } from 'react-icons/fa'; // For icons
 
 const NavWrapper = styled.nav`
   display: flex;
@@ -16,16 +16,16 @@ const NavWrapper = styled.nav`
   gap: 1.5rem; /* Consistent spacing between nav items */
 `;
 
-
 const NavLink = styled(Link)`
   color: #676D75;
   text-decoration: none;
   font-size: 1rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; /* Keep icon and label stacked vertically */
   padding: 0.5rem;
   transition: all 0.3s ease;
+  text-align: center; /* Ensure the label aligns center under icon */
 
   &.active {
     color: white;  // Active link color
@@ -34,13 +34,37 @@ const NavLink = styled(Link)`
 `;
 
 const NavIcon = styled.div`
-  font-size: 1.5rem;  // Icon size
   color: #676D75;  // Default icon color
-  margin-bottom: 0.3rem;
+  font-size: 1.8rem; /* Default size for icons */
+  margin-bottom: 0.5rem; /* Space between icon and label */
 
   ${NavLink}.active & {
     color: white;  // Change icon color to white when active
   }
+`;
+
+const HomeIcon = styled(NavIcon)`
+  font-size: 1.8rem;  /* Larger size for Home */
+  margin-bottom: -13px;
+`;
+
+const InventoryIcon = styled(NavIcon)`
+  font-size: 1.9rem;  /* Slightly larger size for Inventory */
+  margin-bottom: -16px;
+`;
+
+const HistoryIcon = styled(NavIcon)`
+  font-size: 1.5rem;  /* Custom size for History */
+  margin-bottom: -8px;
+`;
+
+const ProfileIcon = styled(NavIcon)`
+  font-size: 1.4rem;  /* Smaller size for Profile */
+  margin-bottom: -6px;
+`;
+
+const Label = styled.div`
+  font-size: 0.9rem;  /* Optional: adjust font size of the label */
 `;
 
 function Nav() {
@@ -49,28 +73,28 @@ function Nav() {
   return (
     <NavWrapper>
       <NavLink to="/seller/home" className={location.pathname === '/seller/home' ? 'active' : ''}>
-        <NavIcon>
-          <FaHome />
-        </NavIcon>
-        Home
+        <HomeIcon>
+          <FaHouseUser />
+        </HomeIcon>
+        <Label>Home</Label>
       </NavLink>
       <NavLink to="/seller/inventory" className={location.pathname === '/seller/inventory' ? 'active' : ''}>
-        <NavIcon>
-          <FaBox />
-        </NavIcon>
-        Inventory
+        <InventoryIcon>
+          <FaBoxOpen />
+        </InventoryIcon>
+        <Label>Inventory</Label>
       </NavLink>
       <NavLink to="/seller/history" className={location.pathname === '/seller/history' ? 'active' : ''}>
-        <NavIcon>
+        <HistoryIcon>
           <FaHistory />
-        </NavIcon>
-        History
+        </HistoryIcon>
+        <Label>History</Label>
       </NavLink>
       <NavLink to="/seller/profile" className={location.pathname === '/seller/profile' ? 'active' : ''}>
-        <NavIcon>
+        <ProfileIcon>
           <FaUser />
-        </NavIcon>
-        Profile
+        </ProfileIcon>
+        <Label>Profile</Label>
       </NavLink>
     </NavWrapper>
   );

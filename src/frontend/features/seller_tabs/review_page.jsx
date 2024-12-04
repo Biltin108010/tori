@@ -1,152 +1,180 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import supabase from "../../../../src/backend/supabaseClient"; // Import your Supabase client
-import "./review_page.css"; // Ensure the page is styled properly
+import supabase from "../../../../src/backend/supabaseClient"; // Ensure Supabase is set up correctly
+import { IoIosArrowBack } from "react-icons/io";
+import styled from "styled-components"; // Import styled-components
+import "./review_page.css"; // Your CSS file for styling
 
-const ReviewPage = () => {
+// Styled Back Button Component
+const BackButton = styled(IoIosArrowBack)`
+  font-size: 1.5rem;
+  color: #333;
+  cursor: pointer;
+  margin-right: 2px;
+
+  &:hover {
+    color: #000;
+  }
+`;
+
+const ReviewPage = ({ userEmail }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Set initial state for orderItems with default quantity
-    const [orderItems, setOrderItems] = useState(
-        (location.state?.items || []).map((item) => ({
-            ...item,
-            quantity: item.quantity || 1, // Ensure quantity is at least 1
-        }))
-    );
-    const [feedbackMessage, setFeedbackMessage] = useState(""); // Feedback message
+    const [orderItems, setOrderItems] = useState([]); // Initialize with an empty array
+    const [feedbackMessage, setFeedbackMessage] = useState(""); // For feedback messages
 
-    const handleQuantityChange = async (index, delta) => {
-        const item = orderItems[index];
-        const newQuantity = (item.quantity || 1) + delta;
+    // Fetch order items from either location.state or the database
+    useEffect(() => {
+        const fetchCartItems = async () => {
+            if (location.state?.items) {
+                setOrderItems(
+                    location.state.items.map((item) => ({
+                        ...item,
+                        counter: 1, // Initialize counters to 1 for all items
+                    }))
+                );
+            } else {
+                try {
+                    const { data, error } = await supabase
+                        .from("add_cart")
+                        .select("*")
+                        .eq("email", userEmail);
 
-        // Prevent invalid quantities before making any changes
-        if (newQuantity < 1 || newQuantity > item.stock) {
-            return; // Exit early if the new quantity is out of valid bounds
-        }
+                    if (error) {
+                        console.error("Error fetching cart items:", error.message);
+                        setFeedbackMessage("Failed to fetch cart items.");
+                        return;
+                    }
 
-        try {
-            const { error } = await supabase
-                .from("inventory")
-                .update({ quantity: newQuantity })
-                .eq("id", item.id);
-
-            if (error) {
-                console.error("Error updating quantity:", error.message);
-                setFeedbackMessage("Failed to update quantity. Please try again.");
-                return;
+                    setOrderItems(
+                        (data || []).map((item) => ({
+                            ...item,
+                            counter: 1, // Initialize counters to 1 for fetched items
+                        }))
+                    );
+                } catch (err) {
+                    console.error("Unexpected error:", err.message);
+                    setFeedbackMessage("An unexpected error occurred while fetching items.");
+                }
             }
+        };
 
-            // Update state after successful database update
-            const updatedItems = orderItems.map((orderItem, i) =>
-                i === index ? { ...orderItem, quantity: newQuantity } : orderItem
-            );
-            setOrderItems(updatedItems);
-            setFeedbackMessage("Quantity updated successfully!");
-        } catch (err) {
-            console.error("Unexpected error:", err.message);
-            setFeedbackMessage("An unexpected error occurred. Please try again.");
-        }
-    };
+        fetchCartItems();
+    }, [location.state, userEmail]);
 
-
-    const handleRemoveItem = async (index) => {
+    const handleCounterChange = (index, delta) => {
         const item = orderItems[index];
+        const newCounter = item.counter + delta;
 
-        try {
-            const { error } = await supabase
-                .from("inventory") // Replace with your table name
-                .delete()
-                .eq("id", item.id);
-
-            if (error) {
-                console.error("Error removing item:", error.message);
-                setFeedbackMessage("Failed to remove item. Please try again.");
-                return;
-            }
-
-            // Remove item from state if the database delete is successful
-            setOrderItems(orderItems.filter((_, i) => i !== index));
-            setFeedbackMessage("Item removed successfully!");
-        } catch (err) {
-            console.error("Unexpected error:", err.message);
-            setFeedbackMessage("An unexpected error occurred. Please try again.");
+        // Prevent counter from going below 0 or exceeding quantity
+        if (newCounter < 0 || newCounter > item.quantity) {
+            return;
         }
+
+        // Update the counter in the state
+        const updatedItems = orderItems.map((orderItem, i) =>
+            i === index ? { ...orderItem, counter: newCounter } : orderItem
+        );
+        setOrderItems(updatedItems);
     };
 
     const handleConfirmOrder = async () => {
         try {
-            // Optional: Save the final order state to a different table (e.g., "orders")
-            const { error } = await supabase
-                .from("orders") // Replace with your orders table
-                .insert(orderItems.map(({ id, ...item }) => item)); // Adjust as needed
+            // Prepare updates for the inventory table
+            const updates = orderItems
+                .filter((item) => item.counter > 0) // Only include items with counter > 0
+                .map((item) => ({
+                    id: item.inventory_id, // Use inventory_id from add_cart as reference to update inventory
+                    quantity: item.quantity - item.counter, // Deduct counter from inventory
+                    name: item.name, // Include name for update
+                }));
 
-            if (error) {
-                console.error("Error confirming order:", error.message);
-                setFeedbackMessage("Failed to confirm order. Please try again.");
+            if (updates.length === 0) {
+                setFeedbackMessage("No items selected to confirm.");
                 return;
             }
 
-            console.log("Order confirmed:", orderItems);
+            // Update inventory table
+            const { error } = await supabase
+                .from("inventory")
+                .upsert(updates); // Update inventory quantities
+
+            if (error) {
+                console.error("Error confirming order:", error.message);
+                setFeedbackMessage("Failed to confirm the order. Please try again.");
+                return;
+            }
+
+            // Clear `add_cart` items after confirming
+            const cartIds = orderItems
+                .filter((item) => item.counter > 0)
+                .map((item) => item.inventory_id); // Use inventory_id for deletion
+            await supabase.from("add_cart").delete().in("inventory_id", cartIds); // Delete by inventory_id
+
             setFeedbackMessage("Order confirmed successfully!");
-            navigate("../inventory"); // Navigate after confirming
+            navigate("../inventory"); // Redirect to inventory after confirming
         } catch (err) {
             console.error("Unexpected error:", err.message);
-            setFeedbackMessage("An unexpected error occurred. Please try again.");
+            setFeedbackMessage("An unexpected error occurred while confirming the order.");
         }
     };
 
+    // Calculate the total amount based on selected items
     const totalAmount = orderItems.reduce(
-        (sum, item) => sum + (item.quantity || 0) * (item.price || 0), // Default to 0 for invalid values
+        (sum, item) => sum + item.counter * (item.price || 0),
         0
     );
 
-
     return (
         <div className="review-container">
-            {feedbackMessage && (
-                <div className="feedback-message">
-                    <p>{feedbackMessage}</p>
-                </div>
-            )}
-            <button className="back-button" onClick={() => navigate(-1)}>
-                &#x2190;
-            </button>
-            <h1>Review Order</h1>
+    {feedbackMessage && (
+        <div className="feedback-message">
+            <p>{feedbackMessage}</p>
+        </div>
+    )}
+    <div className="review-header">
+        <div className="back-logo-container">
+            <div className="back-button-container" onClick={() => navigate(-1)}>
+                <BackButton />
+            </div>
+            <img
+                src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png"
+                alt="Logo"
+                className="header-logo"
+            />
+        </div>
+        <h1 className="review-title">Review Order</h1>
+    </div>
             <div className="seller-info">
                 <span className="seller-label">Seller</span>
                 <span className="seller-name">Person 1</span>
             </div>
             <div className="order-list">
                 {orderItems.map((item, index) => (
-                    <div key={item.id} className="order-item">
+                    <div key={item.inventory_id} className="order-item">
                         <img src={item.image} alt={item.name} className="item-image" />
                         <div className="item-details">
                             <h3 className="item-name">{item.name}</h3>
                             <p className="item-price">₱ {item.price.toFixed(2)}</p>
-                            <p className="item-stock">In stock: {item.stock}</p>
+                            <p className="item-quantity">Total quantity: {item.quantity}</p>
                             <div className="quantity-controls">
                                 <button
-                                    onClick={() => handleQuantityChange(index, -1)}
-                                    disabled={item.quantity === 1}
+                                    onClick={() => handleCounterChange(index, -1)}
+                                    disabled={item.counter === 0}
                                 >
                                     -
                                 </button>
-                                <span className="quantity">{item.quantity}</span>
+                                <span>{item.counter}</span>
                                 <button
-                                    onClick={() => handleQuantityChange(index, 1)}
-                                    disabled={item.quantity === item.stock}
+                                    onClick={() => handleCounterChange(index, 1)}
+                                    disabled={item.counter === item.quantity}
                                 >
                                     +
                                 </button>
                             </div>
                         </div>
-                        <button
-                            className="remove-item"
-                            onClick={() => handleRemoveItem(index)}
-                        >
-                            🗑️
-                        </button>
+                        <button className="remove-item">Remove</button>
                     </div>
                 ))}
             </div>

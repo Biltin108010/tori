@@ -1,10 +1,4 @@
 /* General layout for tab container */
-.tab1-container {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  background-color: #f8f8f8;
-}
 
 /* Modal Overlay */
 .modal-overlay {
@@ -48,7 +42,7 @@
 }
 
 .modal-content button {
-  background-color: #4CAF50;
+  background-color: #00B69B;
   color: white;
   padding: 10px;
   margin-top: 15px;
@@ -58,15 +52,23 @@
 }
 
 .modal-content button:hover {
-  background-color: #45a049;
+  background-color: #00B69B;
 }
 
 .modal-content button:last-child {
-  background-color: #f44336;
+  background-color: #E64646;
 }
 
 .modal-content button:last-child:hover {
-  background-color: #e53935;
+  background-color: #E64646;
+}
+
+.tab1-container {
+  padding: 20px;
+  background-color: #ffffff;
+  display: grid; /* Use grid layout */
+  grid-template-columns: repeat(2, 1fr); /* Two items per row */
+  gap: 20px; /* Add spacing between grid items */
 }
 
 /* Item Box Layout */
@@ -75,32 +77,57 @@
   align-items: center;
   margin-bottom: 20px;
   background-color: white;
-  padding: 15px;
+  padding: 10px;
+  padding-bottom: 0px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 2;
 }
 
-.item-image {
-  width: 80px;
-  height: 80px;
+.item-box {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.inv-item-image {
+  width: 160px;
+  height: 100px;
   object-fit: cover;
   border-radius: 8px;
 }
 
 .item-text-container {
   margin-left: 15px;
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Center the content vertically */
 }
 
 .item-title {
+  font-family: 'Inter', sans-serif;
   font-size: 18px;
   font-weight: bold;
+  margin-top: 5px; 
+  margin-bottom: 0px;/* Remove extra margin */
+  color: #333;
 }
 
 .item-quantity,
-.item-price {
+.inv-item-price {
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
-  margin-top: 5px;
+  margin-top: 5px; /* Add a small gap between quantity and price */
+  margin-bottom: 0;
+  color: #333;/* Remove extra margin */
 }
+
+.duplicate-icon {
+  margin-left: 136px; /* Align the icon to the right */
+  position: relative;
+  top: -19px; /* Move the icon up slightly */
+  cursor: pointer; /* Change cursor to pointer for clickability */
+}
+
 
 /* Plus and Minus Icons */
 .plus-icon, .minus-icon {
@@ -110,19 +137,19 @@
 }
 
 .plus-icon {
-  color: #4CAF50;
+  color: #00B69B;
 }
 
 .plus-icon:hover {
-  color: #388e3c;
+  color: #0b9c7d;
 }
 
 .minus-icon {
-  color: #f44336;
+  color: #E64646;
 }
 
 .minus-icon:hover {
-  color: #d32f2f;
+  color: #E64646;
 }
 
 /* Add Product Button (Sticky) */
@@ -130,7 +157,7 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: 110px;
-  background-color: #4CAF50; /* Green background for the button */
+  background-color: #00B69B; /* Green background for the button */
   color: white; /* White text color */
   padding: 12px 20px; /* Button padding */
   border: none; /* Remove border */
@@ -144,23 +171,36 @@
 }
 
 .add-product-button:hover {
-  background-color: #45a049; /* Darker shade of green when hovered */
+  background-color: #00B69B; /* Darker shade of green when hovered */
 }
 
 /* Review Order Button */
-.review-order-button {
-  background-color: #f0ad4e;
+.tab1-review-order-button {
+  background-color: #00B69B;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
   color: white;
-  padding: 10px 15px;
+  padding: 10px 20px; /* Increase padding for a button look */
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  width: 100%;
+  width: 80%;
   text-align: center;
+  display: flex; /* Flexbox for centering content */
+  justify-content: center; /* Center the text horizontally */
+  align-items: center; /* Center the text vertically */
+  grid-column: span 2; /* Makes the "Review Order" button span across both columns */
+  position: fixed; /* Fixes the button position */
+  bottom: 100px; /* Keeps the button 100px above the nav */
+  left: 50%; /* Centers the button horizontally */
+  transform: translateX(-50%); /* Adjusts the position to truly center */
+  z-index: 10; /* Ensures the button is on top of other elements */
 }
 
-.review-order-button:hover {
-  background-color: #ec971f;
+
+.tab1-container .tab-content {
+  display: contents; /* Prevent this from being affected by the grid layout */
 }
 
 /* Responsive Layout */
@@ -169,20 +209,8 @@
     padding: 10px;
   }
 
-  .item-box {
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 15px;
-    padding: 10px;
-  }
-
   .modal-content {
     padding: 15px;
-  }
-
-  .item-image {
-    width: 60px;
-    height: 60px;
   }
 
   .item-text-container {

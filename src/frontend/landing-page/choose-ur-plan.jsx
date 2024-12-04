@@ -3,8 +3,9 @@ import styled from "styled-components";
 import { IoIosArrowBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import supabase from '../../backend/supabaseClient';
+
 // Styled components
-export const Wrapper = styled.div`
+export const PlanWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -14,41 +15,41 @@ export const Wrapper = styled.div`
   padding: 2rem;
 `;
 
-export const Header = styled.div`
+export const PlanHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 400px; /* Restrict to the same width as choices and button */
+  max-width: 400px;
   margin-bottom: 1rem;
 `;
 
-export const BackButton = styled(IoIosArrowBack)`
+export const BackIcon = styled(IoIosArrowBack)`
   font-size: 1.5rem;
   color: #333;
   cursor: pointer;
 `;
 
-export const Logo = styled.img`
+export const PlanLogo = styled.img`
   width: 4rem;
   height: 4rem;
 `;
 
-export const Title = styled.h1`
+export const PlanTitle = styled.h1`
   font-size: 30px;
   font-family: 'Poppins', sans-serif;
   font-weight: 800;
-  text-align: left; /* Align title to the left */
+  text-align: left;
   margin: 1rem 0 0.5rem;
   width: 100%;
   max-width: 400px;
 `;
 
-export const Subtitle = styled.p`
+export const PlanSubtitle = styled.p`
   font-family: 'Inter', sans-serif;
   color: #555;
   font-size: 16px;
-  text-align: left; /* Left-aligned text */
+  text-align: left;
   margin: 0 0 1rem;
   width: 100%;
   max-width: 400px;
@@ -61,11 +62,11 @@ const PlanCard = styled.div`
   border: 1px solid ${({ selected }) => (selected ? "#000" : "#ddd")};
   border-radius: 12px;
   padding: 1.5rem;
-  margin-bottom: 10px; /* Close spacing between cards */
+  margin-bottom: 10px;
   cursor: pointer;
   background-color: ${({ selected }) => (selected ? "#f9f9f9" : "#fff")};
   width: 100%;
-  max-width: 310px; /* Match the button width */
+  max-width: 310px;
   transition: border-color 0.3s ease;
 
   &:hover {
@@ -76,10 +77,10 @@ const PlanCard = styled.div`
 const PlanInfo = styled.div`
   display: flex;
   flex-direction: column;
-  text-align: left; /* Ensure text inside is left-aligned */
+  text-align: left;
 `;
 
-const PlanTitle = styled.h2`
+const PlanDetailsTitle = styled.h2`
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
   font-weight: 600;
@@ -101,7 +102,7 @@ const PlanDetails = styled.p`
   margin: 0;
 `;
 
-const CircleButton = styled.div`
+const SelectionCircle = styled.div`
   width: 1rem;
   height: 1rem;
   border: 2px solid ${({ selected }) => (selected ? "#000" : "#ddd")};
@@ -109,11 +110,11 @@ const CircleButton = styled.div`
   background-color: ${({ selected }) => (selected ? "#000" : "transparent")};
 `;
 
-export const ContinueButton = styled.button`
+export const PlanContinueButton = styled.button`
   width: 100%;
-  max-width: 400px; /* Align width with plan cards */
+  max-width: 400px;
   padding: 1rem;
-  margin-top: 30px; /* Space between the continue button and choices */
+  margin-top: 30px;
   background-color: #000;
   color: #fff;
   font-family: 'Poppins', sans-serif;
@@ -132,7 +133,7 @@ export const ContinueButton = styled.button`
 function ChooseYourPlan() {
   const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState("");
-  const [loading, setLoading] = useState(false); // To handle loading state
+  const [loading, setLoading] = useState(false);
 
   const handlePlanSelection = (plan) => {
     setSelectedPlan(plan);
@@ -147,7 +148,6 @@ function ChooseYourPlan() {
     setLoading(true);
 
     try {
-      // Fetch the authenticated user's details
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError || !user) {
         alert("User not authenticated.");
@@ -157,18 +157,17 @@ function ChooseYourPlan() {
 
       const userEmail = user.email;
 
-      // Update the user's plan in the database using the email
       const { error } = await supabase
-        .from("users") // Replace with your actual table name
+        .from("users")
         .update({ plan: selectedPlan })
-        .eq("email", userEmail); // Match the user by email
+        .eq("email", userEmail);
 
       if (error) {
         console.error("Error updating plan:", error.message);
         alert("An error occurred while updating your plan. Please try again.");
       } else {
         alert(`Plan updated to "${selectedPlan}".`);
-        navigate("/seller/home"); // Redirect after successful update
+        navigate("/seller/home");
       }
     } catch (error) {
       console.error("Unexpected error:", error.message);
@@ -179,40 +178,40 @@ function ChooseYourPlan() {
   };
 
   return (
-    <Wrapper>
-      <Header>
-        <BackButton onClick={() => navigate(-1)} />
-        <Logo src="/images/tori_logo2.png" alt="Logo" />
-      </Header>
-      <Title>Choose your plan</Title>
-      <Subtitle>
+    <PlanWrapper>
+      <PlanHeader>
+        <BackIcon onClick={() => navigate(-1)} />
+        <PlanLogo src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png" alt="Logo" />
+      </PlanHeader>
+      <PlanTitle>Choose your plan</PlanTitle>
+      <PlanSubtitle>
         To complete the sign-up process, please choose a subscription plan.
-      </Subtitle>
+      </PlanSubtitle>
       <PlanCard selected={selectedPlan === "starter"} onClick={() => handlePlanSelection("starter")}>
         <PlanInfo>
-          <PlanTitle>Starter (up to 4 users)</PlanTitle>
+          <PlanDetailsTitle>Starter (up to 4 users)</PlanDetailsTitle>
           <PlanPrice>₱250.00 / mo</PlanPrice>
         </PlanInfo>
-        <CircleButton selected={selectedPlan === "starter"} />
+        <SelectionCircle selected={selectedPlan === "starter"} />
       </PlanCard>
       <PlanCard selected={selectedPlan === "premium"} onClick={() => handlePlanSelection("premium")}>
         <PlanInfo>
-          <PlanTitle>Premium (up to 10 users)</PlanTitle>
+          <PlanDetailsTitle>Premium (up to 10 users)</PlanDetailsTitle>
           <PlanPrice>₱500.00 / mo</PlanPrice>
         </PlanInfo>
-        <CircleButton selected={selectedPlan === "premium"} />
+        <SelectionCircle selected={selectedPlan === "premium"} />
       </PlanCard>
       <PlanCard selected={selectedPlan === "free"} onClick={() => handlePlanSelection("free")}>
         <PlanInfo>
-          <PlanTitle>Free</PlanTitle>
+          <PlanDetailsTitle>Free</PlanDetailsTitle>
           <PlanDetails>Up to 2 users only</PlanDetails>
         </PlanInfo>
-        <CircleButton selected={selectedPlan === "free"} />
+        <SelectionCircle selected={selectedPlan === "free"} />
       </PlanCard>
-      <ContinueButton onClick={handleContinue} disabled={loading}>
+      <PlanContinueButton onClick={handleContinue} disabled={loading}>
         {loading ? "Updating..." : "Continue"}
-      </ContinueButton>
-    </Wrapper>
+      </PlanContinueButton>
+    </PlanWrapper>
   );
 }
 

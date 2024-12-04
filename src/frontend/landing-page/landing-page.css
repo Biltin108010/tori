@@ -27,7 +27,7 @@
 .logo {
     display: flex;
     justify-content: center;
-    margin-bottom: 0rem; /* Space between logo and title */
+    margin-bottom: 0rem;
 }
 
 /* Header */
@@ -100,38 +100,53 @@
 
 /* Buttons */
 .button {
-    cursor: pointer;
-    width: 100%;
-    margin-top: 10px;
-    background-color: #000000;
-    color: #ffffff;
-    padding: 1rem;
-    border-radius: 5px;
-    text-align: center;
-    transition: background-color 0.3s ease;
-    font-size: 14px;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  background-color: #000000;
+  color: #ffffff;
+  padding: 1rem;
+  border-radius: 5px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  outline: none;  /* Remove any outline */
 }
 
 .button-primary {
-    cursor: pointer;
-    width: 100%;
-    margin-top: 10px;
-    background-color: #000000;
-    color: #ffffff;
-    padding: 1rem;
-    border-radius: 5px;
-    text-align: center;
-    transition: background-color 0.3s ease;
-    font-size: 14px;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  background-color: #000000;
+  color: #ffffff;
+  padding: 1rem;
+  border-radius: 5px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  outline: none;  /* Remove any outline */
 }
 
+/* Hover effect */
 .button-primary:hover {
-    background-color: #333;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  background-color: #333;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Remove the default focus outline */
+.button-primary:focus {
+  outline: none;  /* No outline on focus */
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.25);  /* Add a custom focus effect */
+}
+
+/* For keyboard accessibility */
+.button-primary:focus-visible {
+  outline: none;  /* Ensure no outline */
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.25);  /* Custom focus box-shadow */
 }
 
 /* Eye button styles */
@@ -139,7 +154,7 @@
     position: absolute;
     right: 0.75rem; /* Keeps it aligned with the right side */
     top: 55%; /* Move the button a little lower */
-    transform: translateY(-50%); /* Keeps the centering */
+    transform: translateY(-30%); /* Keeps the centering */
     height: 1.5rem; /* Adjust button size */
     width: 1.5rem;  /* Adjust button size */
     background: transparent;
@@ -238,12 +253,13 @@
         flex: 1;
         height: 1px;
         background-color: #ddd;
-        width: 100px;
+        width: 60px;
       }
       
       .divider-text {
         padding: 0 10px; /* Space between the text and the lines */
         z-index: 1; /* Ensure the text is above the lines */
+        background-color: #ffffff;
       }
       
       .social-icons {
@@ -256,13 +272,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 10px 30px;
+        padding: 10px 60px;
         border: 1px solid #ccc;
         border-radius: 10px;
         background-color: #fff;
         cursor: pointer;
         transition: background-color 0.3s ease;
         margin-bottom: 10px;
+        margin-top: 20px;
       }
       
       .social-icon i {
@@ -348,3 +365,4 @@
   }
   
 }
+
