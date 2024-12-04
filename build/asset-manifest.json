@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/tori/static/css/main.9eaca8cc.css",
-    "main.js": "/tori/static/js/main.5cabf2a8.js",
-    "static/js/952.e4c69efe.chunk.js": "/tori/static/js/952.e4c69efe.chunk.js",
-    "static/js/453.da11abd0.chunk.js": "/tori/static/js/453.da11abd0.chunk.js",
-    "index.html": "/tori/index.html",
-    "main.9eaca8cc.css.map": "/tori/static/css/main.9eaca8cc.css.map",
-    "main.5cabf2a8.js.map": "/tori/static/js/main.5cabf2a8.js.map",
-    "952.e4c69efe.chunk.js.map": "/tori/static/js/952.e4c69efe.chunk.js.map",
-    "453.da11abd0.chunk.js.map": "/tori/static/js/453.da11abd0.chunk.js.map"
+    "main.css": "/Techno2.0/tori/static/css/main.9eaca8cc.css",
+    "main.js": "/Techno2.0/tori/static/js/main.ff24390c.js",
+    "static/js/952.e4c69efe.chunk.js": "/Techno2.0/tori/static/js/952.e4c69efe.chunk.js",
+    "static/js/453.da11abd0.chunk.js": "/Techno2.0/tori/static/js/453.da11abd0.chunk.js",
+    "index.html": "/Techno2.0/tori/index.html",
+    "main.9eaca8cc.css.map": "/Techno2.0/tori/static/css/main.9eaca8cc.css.map",
+    "main.ff24390c.js.map": "/Techno2.0/tori/static/js/main.ff24390c.js.map",
+    "952.e4c69efe.chunk.js.map": "/Techno2.0/tori/static/js/952.e4c69efe.chunk.js.map",
+    "453.da11abd0.chunk.js.map": "/Techno2.0/tori/static/js/453.da11abd0.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9eaca8cc.css",
-    "static/js/main.5cabf2a8.js"
+    "static/js/main.ff24390c.js"
   ]
 }
