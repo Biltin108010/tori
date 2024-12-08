@@ -1,0 +1,11 @@
+.waiting-for-approval {
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    text-align: center; /* Center align text inside */
+    height: 100vh; /* Take full height of the viewport or parent container */
+    font-family: 'Inter', sans-serif; /* Use Inter font */
+    font-size: 1.2rem; /* Adjust font size for better readability */
+    color: #333; /* Neutral text color */
+    background-color: #f9f9f9; /* Optional light background */
+  }

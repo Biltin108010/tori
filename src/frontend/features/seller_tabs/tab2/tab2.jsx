@@ -90,57 +90,7 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
     }
   }, [userEmail]);
 
-  const increaseQuantity = async (id) => {
-    const item = items.find((i) => i.id === id);
 
-    if (item) {
-      try {
-        const { error } = await supabase
-          .from("inventory")
-          .update({ quantity: item.quantity + 1 })
-          .eq("id", id);
-
-        if (error) {
-          console.error("Error increasing quantity:", error.message);
-          setFeedbackMessage("Failed to update quantity. Please try again.");
-          return;
-        }
-
-        fetchInventory(); // Refresh data
-        setFeedbackMessage("Quantity successfully increased!");
-      } catch (err) {
-        console.error("Unexpected error:", err.message);
-        setFeedbackMessage("An unexpected error occurred. Please try again.");
-      }
-    }
-  };
-
-  const decreaseQuantity = async (id) => {
-    const item = items.find((i) => i.id === id);
-
-    if (item && item.quantity > 1) {
-      try {
-        const { error } = await supabase
-          .from("inventory")
-          .update({ quantity: item.quantity - 1 })
-          .eq("id", id);
-
-        if (error) {
-          console.error("Error decreasing quantity:", error.message);
-          setFeedbackMessage("Failed to update quantity. Please try again.");
-          return;
-        }
-
-        fetchInventory();
-        setFeedbackMessage("Quantity successfully decreased!");
-      } catch (err) {
-        console.error("Unexpected error:", err.message);
-        setFeedbackMessage("An unexpected error occurred. Please try again.");
-      }
-    } else {
-      setFeedbackMessage("Quantity cannot be less than 1.");
-    }
-  };
 
   const duplicateItem = async (item) => {
     if (!userEmail) {
@@ -182,6 +132,7 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
         if (inventoryError) {
           console.error("Error fetching inventory item:", inventoryError.message);
           setFeedbackMessage("Failed to fetch inventory item.");
+          setTimeout(() => setFeedbackMessage(''), 3000);
           return;
         }
 
@@ -189,6 +140,7 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
 
         if (!inventoryId) {
           setFeedbackMessage("Inventory item not found.");
+          setTimeout(() => setFeedbackMessage(''), 3000);
           return;
         }
       }
@@ -210,13 +162,16 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
       if (error) {
         console.error("Error duplicating item:", error.message);
         setFeedbackMessage("Failed to add item to cart. Please try again.");
+        setTimeout(() => setFeedbackMessage(''), 3000);
         return;
       }
 
       setFeedbackMessage("Product successfully added to cart!");
+      setTimeout(() => setFeedbackMessage(''), 3000);
     } catch (err) {
       console.error("Unexpected error:", err.message);
       setFeedbackMessage("An unexpected error occurred. Please try again.");
+      setTimeout(() => setFeedbackMessage(''), 3000);
     }
   };
 
@@ -231,6 +186,7 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
       if (error) {
         console.error("Error fetching cart items:", error.message);
         setFeedbackMessage("Failed to fetch cart items.");
+        setTimeout(() => setFeedbackMessage(''), 3000);
         return;
       }
 
@@ -238,27 +194,26 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
     } catch (err) {
       console.error("Unexpected error:", err.message);
       setFeedbackMessage("An unexpected error occurred.");
+      setTimeout(() => setFeedbackMessage(''), 3000);
     }
   };
 
   return (
-    <div className="tab1-container">
-      {feedbackMessage && <div className="feedback-message"><p>{feedbackMessage}</p></div>}
-
+    <div className="tab-content">
+      {feedbackMessage && (
+        <div className="tab-feedback-message">
+          <p>{feedbackMessage}</p>
+        </div>
+      )}
+  
       {isApproved === false && !isSearching && (
         <div className="waiting-for-approval">
-          <p>Waiting for approval</p>
+          <p>Waiting for approval.</p>
         </div>
       )}
-
-      {isApproved === true && items.length === 0 && !isSearching && (
-        <div className="seller-icon-container">
-          <AiOutlineUser className="huge-user-icon" />
-        </div>
-      )}
-
+  
       {isApproved === true && items.length > 0 && (
-        <div className="tab-content">
+        <div className="tab1-container">
           {items.map((item) => (
             <div key={item.id} className="item-box">
               <img
@@ -268,13 +223,17 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
               />
               <div className="item-text-container">
                 <p className="item-title">{item.name}</p>
-
-                <p className="inv-item-quantity">Qty: {item.quantity}</p>
-                <p className="item-price">Price: ₱{item.price}</p>
-                <AiOutlinePlus
-                  className="duplicate-icon"
-                  onClick={() => duplicateItem(item)}
-                />
+                <p className="item-quantity">
+                  Qty: {item.quantity}
+                  <AiOutlinePlus
+                    className="plus-icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      duplicateItem(item);
+                    }}
+                  />
+                </p>
+                <p className="inv-item-price">Price: ₱{item.price}</p>
               </div>
             </div>
           ))}
@@ -285,6 +244,6 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
       )}
     </div>
   );
-};
-
+}
 export default Tab2;
+

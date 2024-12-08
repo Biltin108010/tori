@@ -13,15 +13,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0px;
+    margin-bottom: 10px;
 }
 
 .history-title {
-  font-family: 'Poppins', 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 2.5rem;
   font-weight: 800;
   color: #333;
-  flex: 1;
+  margin: 0;
 }
 
 .history-logo-container {
@@ -39,7 +39,6 @@
     width: 100%;
     height: 1px;
     background-color: #ddd; /* Light gray color for the divider */
-    margin: 0px 0; /* Space above and below the divider */
   }
 
 /* Header Actions */
@@ -63,8 +62,6 @@
     cursor: pointer;
     width: 60%; /* Make the dropdown occupy the full available width */
     max-width: 250px; /* Optional: Set a max-width for the dropdown */
-
- 
     background-color: #2E2D2D !important; /* Force black background */
     color: #ffffff !important; /* Force white text */
   
@@ -76,80 +73,82 @@
   font-size: 1.5rem; /* Larger icon size */
   margin-left: auto; /* Pushes it to the right */
   cursor: pointer;
+  color: #333;
 }
 
 /* History List */
-.history-list {
-  flex: 1;
-  margin-top: 10px;
-  overflow-y: auto;
-  padding: 1px;
-}
-
 .history-item {
   display: flex;
-  align-items: flex-start; /* Ensures alignment starts at the top */
+  align-items: center; /* Align items in the middle for consistency */
   background-color: #ffffff;
-  border-radius: 12px; /* Slightly larger rounding for a modern feel */
-  padding: 20px; /* Increased padding for spacing */
-  margin-bottom: 12px; /* Consistent spacing between items */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Softer shadow for better aesthetics */
-  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effect */
+  border-radius: 12px; /* Smooth, modern rounded corners */
+  padding: 16px 20px; /* Balanced padding for spaciousness */
+  margin-bottom: 20px; /* Slightly larger spacing between items for better separation */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Soft shadow for subtle depth */
 }
 
-.history-item:hover {
-  transform: translateY(-3px); /* Slight lift on hover */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
-}
-
-/* Cart Icon */
 .item-icon {
-  color: #333; /* Neutral color for the icon */
-  margin-right: 16px; /* Consistent spacing from text */
-  width: 40px; /* Reduced size for balance */
+  margin-right: 20px; /* Space between icon and details */
+  width: 40px;
   height: 40px;
-  background-color: #f5f5f5; /* Light background for contrast */
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 50%; /* Circle icon background */
 }
 
-/* Item Details */
 .item-details {
-  flex: 1;
-}
-.amount-date {
+  flex: 1; /* Expand to fill the available space */
   display: flex;
-  flex-direction: column; /* Stack amount and date */
-  align-items: flex-end; /* Align content to the right */
+  flex-direction: column; /* Stack title and subtitle */
+  justify-content: center; /* Align content in the center vertically */
+  gap: 4px; /* Add space between title and subtitle */
 }
 
-/* Amount */
-.amount {
-  font-size: 1.5rem; /* Reduced size for balance */
-  color: #333;
-  font-weight: bold; /* Emphasis on amount */
-  margin-bottom: 4px; /* Space between amount and date */
+.hist-title {
+  font-size: 1rem; /* Consistent sizing for titles */
+  font-weight: 700; /* Bold for primary emphasis */
+  color: #222; /* Dark color for contrast */
 }
-
-  /* Sub Date */
-  .sub-date {
-    font-size: 0.85rem;
-    color: #888; /* Subtle gray for secondary info */
-  }
-
-  .hist-title {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #222; /* Darker color for emphasis */
-    margin-bottom: 4px; /* Spacing between title and subtitle */
-  }
 
 .sub-title {
-  font-size: 0.9rem;
-  color: #666;
+  font-size: 0.9rem; /* Slightly smaller for hierarchy */
+  color: #555; /* Muted gray for secondary info */
+  font-weight: 400; /* Normal weight for readability */
 }
+
+.amount-date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Align content to the right */
+  justify-content: center; /* Center the text vertically */
+  gap: 4px; /* Space between amount, quantity, and date */
+}
+
+.amount {
+  font-size: 1rem; /* Readable font size */
+  color: #242323; /* Dark color for emphasis */
+  font-weight: 800; /* Semi-bold for clarity */
+}
+
+.history-quantity {
+  font-size: 0.85rem; /* Smaller size for secondary info */
+  color: #555; /* Muted gray for less emphasis */
+  font-weight: 400; /* Normal weight for readability */
+}
+
+.sub-date {
+  font-size: 0.8rem; /* Slightly smaller for secondary info */
+  color: #888; /* Subtle gray for secondary importance */
+  margin-top: 2px; /* Small space between quantity and date */
+  text-align: right; /* Right-align for consistency */
+}
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background-color: #ddd; /* Light gray color for the divider */
+    margin: 0px 0; /* Space above and below the divider */
+  }
 
 /* Filter Modal Styling */
 .filter-modal {
@@ -163,13 +162,6 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
-  }
-
-  .divider {
-    width: 100%;
-    height: 1px;
-    background-color: #ddd; /* Light gray color for the divider */
-    margin: 0px 0; /* Space above and below the divider */
   }
   
   .filter-modal-content {

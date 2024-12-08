@@ -4,8 +4,6 @@
 }
 
 .tab-container {
-  display: flex;
-  flex-direction: column;
   width: 100%;
   max-width: auto;
   background-color: #ffffff;
@@ -42,7 +40,6 @@
   font-weight: 800;
   font-style: normal;
   padding-bottom: 5px;
-  flex-grow: 1; /* Allow title to take up remaining space */
 }
 
 .tab-container .tabscontentlogo {
@@ -109,27 +106,18 @@
 }
 
 /* Back Button */
-.back-button {
+.back-button-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
+  width: 35px; /* Smaller width */
+  height: 35px; /* Smaller height to maintain a square */
+  border: 1px solid #ddd; /* Adds a border */
+  border-radius: 8px; /* Slightly rounded corners */
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-right: 10px;
-}
-
-.back-button:hover {
-  background-color: #f2f2f2;
-  color: #007bff;
-  border-color: #ccc;
+  background-color: #fff; /* Background color */
+  transition: all 0.2s ease-in-out;
+  margin-top: 3px;
 }
 
 /* Tabs */
@@ -177,14 +165,6 @@
 /* Tab Content */
 .tab-container .tab-content {
   padding: 10px;
-}
-
-.tab-container .title {
-  display: flex;
-  align-items: center;
-  flex-direction: row; /* Side-by-side layout */
-  justify-content: space-between; /* Spread out content between the title and logo */
-  width: 100%;  /* Take full width */
 }
 
 .tab-container .logo {

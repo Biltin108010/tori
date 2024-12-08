@@ -10,6 +10,7 @@ const Wrapper = styled.div`
   height: 100vh;
   font-size: 2rem;
   color: #333;
+  font-family: 'Inter', sans-serif;
 `;
 
 
@@ -17,8 +18,6 @@ const Wrapper = styled.div`
 const Card = styled.div`
   width: 20rem;
   margin-top: -8rem;
-  background: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;
   padding: 1.5rem;
 `;
@@ -59,6 +58,7 @@ const Input = styled.input`
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #f8f9fa;
+  font-family: 'Inter', sans-serif;
 
   &:focus {
     border-color: #333;
@@ -73,6 +73,7 @@ const Select = styled.select`
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #f8f9fa;
+  font-family: 'Inter', sans-serif;
 
   &:focus {
     border-color: #333;
@@ -100,6 +101,7 @@ const SubmitButton = styled.button`
   border-radius: 8px;
   cursor: pointer;
   margin-top: 1rem;
+  font-family: 'Inter', sans-serif;
 
   &:hover {
     background-color: #000;

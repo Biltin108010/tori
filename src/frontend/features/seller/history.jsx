@@ -164,9 +164,12 @@ function History() {
     <div className="history-container">
       <header className="history-header">
         <h1 className="history-title">History</h1>
+        <div className="home-logo-container">
+        <img src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png" alt="Logo" className="home-logo" />
+        </div>
       </header>
 
-      <div className="divider"></div>
+      <div className="home-divider"></div>
 
       <div className="header-actions">
         <select
@@ -213,16 +216,19 @@ function History() {
             <FaCartPlus size={24} className="item-icon" />
             <div className="item-details">
               <div className="hist-title">Name: {item.name}</div>
-              <div className="sub-title">Email: {item.email}</div>
-            </div>
-            <div className="amount-date">
-              <div className="amount">
-                ₱ {item.totalPrice.toFixed(2)} (Qty: {item.quantity})
-              </div>
-              <div className="sub-date">
-                {new Date(item.created_at).toLocaleString()}
+              <div className="sub-title">
+                <div>Email:</div>
+                <div>{item.email}</div>
               </div>
             </div>
+            <div class="amount-date">
+            <div class="amount">₱ {item.totalPrice.toFixed(2)}</div>
+            <div class="history-quantity">(Qty: {item.quantity})</div>
+            <div class="sub-date">
+              <div>{new Date(item.created_at).toLocaleDateString()}</div>
+              <div>{new Date(item.created_at).toLocaleTimeString()}</div>
+            </div>
+          </div>
           </div>
         ))}
       </div>

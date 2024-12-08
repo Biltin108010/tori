@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { IoIosArrowBack } from 'react-icons/io';
 import Tab1 from './tab1/tab1';
 import Tab2 from './tab2/tab2';
 import Tab3 from './tab3/tab3';
 import './TabsContainer.css';
 import supabase from '../../../backend/supabaseClient';
+import styled from 'styled-components';
 
 export default function TabContainer() {
   const [activeTab, setActiveTab] = useState(0);
@@ -17,9 +19,21 @@ export default function TabContainer() {
   const [users, setUsers] = useState([]);
   const [inviterInventory, setInviterInventory] = useState([]);
   const [secondInvitedUserInventory, setSecondInvitedUserInventory] = useState([]);
-  const [userTeamEmails, setUserTeamEmails] = useState([]); // Track the team emails
-  const [teamNum, setTeamNum] = useState(null); // Store the team number
-  const [approvalStatus, setApprovalStatus] = useState(null); // Track current user's approval status
+  const [userTeamEmails, setUserTeamEmails] = useState([]); 
+  const [teamNum, setTeamNum] = useState(null); 
+  const [approvalStatus, setApprovalStatus] = useState(null); 
+
+  // Style the Back Button with styled-components (if needed)
+  const BackButton = styled(IoIosArrowBack)`
+    font-size: 1.5rem;
+    color: #333;
+    cursor: pointer;
+    margin-right: 2px;
+
+    &:hover {
+      color: #000;
+    }
+  `;
 
   const toggleEditMode = () => {
     setIsEditing((prev) => !prev);
@@ -47,7 +61,6 @@ export default function TabContainer() {
           setUserRole(userData.role);
         }
 
-        // Fetch the team data to get the user's team_num and approval status
         const { data: teamData, error: teamError } = await supabase
           .from('team')
           .select('team_num, approved')
@@ -58,21 +71,19 @@ export default function TabContainer() {
           console.error('Error fetching team data:', teamError);
         } else if (teamData) {
           setTeamNum(teamData.team_num);
-          setApprovalStatus(teamData.approved); // Store approval status
+          setApprovalStatus(teamData.approved);
 
-          // Now fetch the invited users from the same team number, excluding the current user
           const { data: teamMembers, error: membersError } = await supabase
             .from('team')
             .select('invite')
             .eq('team_num', teamData.team_num)
-            .neq('invite', user.email);  // Exclude current user from the invite list
+            .neq('invite', user.email);
 
           if (membersError) {
             console.error('Error fetching team members:', membersError);
           } else if (teamMembers) {
             const invitedEmails = teamMembers.map((member) => member.invite);
 
-            // Fetch the details of invited users
             const usersData = await Promise.all(
               invitedEmails.map(async (inviteEmail) => {
                 const { data: invitedUser, error } = await supabase
@@ -91,7 +102,6 @@ export default function TabContainer() {
 
             setInvitedUsers(usersData.filter((user) => user !== null));
 
-            // Fetch the inventory data for the first invited user if the current user is approved
             if (invitedEmails.length > 0 && approvalStatus) {
               const { data: inviterInventoryData, error: inventoryError } = await supabase
                 .from('inventory')
@@ -105,7 +115,6 @@ export default function TabContainer() {
               }
             }
 
-            // Fetch the inventory data for the second invited user if they exist and the current user is approved
             if (invitedEmails.length > 1 && approvalStatus) {
               const { data: secondInvitedUserInventoryData, error: secondInventoryError } = await supabase
                 .from('inventory')
@@ -185,8 +194,8 @@ export default function TabContainer() {
         <div className="header-wrapper">
           <div className="title">
             {isEditing && (
-              <button className="back-button" onClick={toggleEditMode}>
-                &#8592;
+              <button className="back-button-container" onClick={toggleEditMode}>
+                <BackButton />
               </button>
             )}
             <h2>Inventory</h2>

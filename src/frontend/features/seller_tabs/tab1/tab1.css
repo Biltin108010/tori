@@ -21,47 +21,61 @@
   width: 400px;
   max-width: 90%;
   z-index: 1001; /* Ensure it appears above the overlay */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Added slight shadow */
 }
 
 .modal-content h2 {
+  font-family: 'Poppins', sans-serif;
   margin-bottom: 15px;
   font-size: 24px;
+  font-weight: 900;
+  color: #333;
 }
 
 .modal-content label {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #555;
 }
 
 .modal-content input {
   width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border-radius: 4px;
+  padding: 12px; /* Increased padding for better usability */
+  margin-top: 8px; /* Adjusted margin */
+  margin-bottom: 15px; /* Spaced out the inputs from the buttons */
+  border-radius: 6px;
   border: 1px solid #ddd;
+  font-size: 16px;
+  box-sizing: border-box; /* Ensure padding doesn't cause overflow */
 }
 
 .modal-content button {
-  background-color: #00B69B;
+  background-color: #00B69B; /* Pastel semi-dark green */
   color: white;
-  padding: 10px;
+  padding: 12px;
   margin-top: 15px;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-size: 16px;
+  width: 100%; /* Ensure the button spans the width of the modal */
+  transition: background-color 0.3s ease;
 }
 
 .modal-content button:hover {
-  background-color: #00B69B;
+  background-color: #00B69B; /* Slightly darker pastel green */
 }
 
 .modal-content button:last-child {
-  background-color: #E64646;
+  background-color: #f85c4e; /* Pastel tomato red */
 }
 
 .modal-content button:last-child:hover {
-  background-color: #E64646;
+  background-color: #f85c4e; /* Slightly darker pastel tomato red */
 }
+
+
 
 .tab1-container {
   padding: 20px;
@@ -69,8 +83,9 @@
   display: grid; /* Use grid layout */
   grid-template-columns: repeat(2, 1fr); /* Two items per row */
   gap: 20px; /* Add spacing between grid items */
+  justify-items: center; /* Horizontally center the items */
+  align-items: center; /* Vertically center the items */
 }
-
 /* Item Box Layout */
 .item-box {
   display: flex;
@@ -78,10 +93,9 @@
   margin-bottom: 20px;
   background-color: white;
   padding: 10px;
-  padding-bottom: 0px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 2;
+  z-index: 0;
 }
 
 .item-box {
@@ -94,6 +108,7 @@
   height: 100px;
   object-fit: cover;
   border-radius: 8px;
+  margin-top: 5px;
 }
 
 .item-text-container {
@@ -121,6 +136,10 @@
   color: #333;/* Remove extra margin */
 }
 
+.inv-item-price {
+  margin-bottom: 5px;
+}
+
 .duplicate-icon {
   margin-left: 136px; /* Align the icon to the right */
   position: relative;
@@ -137,38 +156,46 @@
 }
 
 .plus-icon {
-  color: #00B69B;
+  color: #333;
+  margin-left: 60px;
 }
 
 .plus-icon:hover {
-  color: #0b9c7d;
+  color: #333;
 }
 
 .minus-icon {
-  color: #E64646;
+  color: #333;
 }
 
 .minus-icon:hover {
-  color: #E64646;
+  color: #333;
 }
 
 /* Add Product Button (Sticky) */
 .add-product-button {
-  flex-direction: column;
+  background-color: #00B69B;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px; /* Increase font size for better visibility */
+  font-weight: 800;
+  color: white;
+  padding: 15px 30px; /* Slightly reduce padding for balance */
+  border-radius: 6px; /* Larger border radius for a more rounded look */
+  border: none;
+  cursor: pointer;
+  width: 80%; /* Allow the width to adjust based on content */
+  max-width: 342px; /* Set a maximum width for better control */
+  text-align: center;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 110px;
-  background-color: #00B69B; /* Green background for the button */
-  color: white; /* White text color */
-  padding: 12px 20px; /* Button padding */
-  border: none; /* Remove border */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Cursor pointer on hover */
-  font-size: 16px; /* Adjust font size */
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 10; /* Ensure the button is on top of other elements */
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
 }
+
 
 .add-product-button:hover {
   background-color: #00B69B; /* Darker shade of green when hovered */
@@ -178,24 +205,24 @@
 .tab1-review-order-button {
   background-color: #00B69B;
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: 16px; /* Increase font size for better visibility */
   font-weight: 800;
   color: white;
-  padding: 10px 20px; /* Increase padding for a button look */
-  border-radius: 4px;
+  padding: 15px 30px; /* Increase padding for a larger button */
+  border-radius: 6px; /* Slightly larger border radius for a more rounded look */
   border: none;
   cursor: pointer;
   width: 80%;
   text-align: center;
-  display: flex; /* Flexbox for centering content */
-  justify-content: center; /* Center the text horizontally */
-  align-items: center; /* Center the text vertically */
-  grid-column: span 2; /* Makes the "Review Order" button span across both columns */
-  position: fixed; /* Fixes the button position */
-  bottom: 100px; /* Keeps the button 100px above the nav */
-  left: 50%; /* Centers the button horizontally */
-  transform: translateX(-50%); /* Adjusts the position to truly center */
-  z-index: 10; /* Ensures the button is on top of other elements */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-column: span 2;
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
 }
 
 
@@ -203,10 +230,48 @@
   display: contents; /* Prevent this from being affected by the grid layout */
 }
 
+.waiting-for-approval {
+  display: flex !important; /* Force flexbox layout */
+  justify-content: center; /* Horizontally center content */
+  align-items: center; /* Vertically center content */
+  text-align: center; /* Center-align text */
+  height: auto; /* Let height adjust based on content */
+  font-family: 'Inter', sans-serif; /* Use Inter font */
+  font-size: 14px; /* Adjust font size */
+  color: #e60000; /* Text color */
+  grid-area: unset !important; /* Remove any grid-area influence */
+  background-color: #f8d7da; /* Light pastel red background */
+  border-radius: 12px; /* Rounded corners */
+  padding: 3px 20px; /* Add some padding for spacing */
+}
+
+
+.tab-feedback-message {
+  margin-bottom: 15px;
+  display: flex !important; /* Force flexbox layout */
+  justify-content: center; /* Horizontally center content */
+  align-items: center; /* Vertically center content */
+  text-align: center; /* Center-align text */
+  height: auto; /* Let height adjust based on content */
+  font-family: 'Inter', sans-serif; /* Use Inter font */
+  font-size: 14px; /* Adjust font size */
+  color: #e60000; /* Text color */
+  grid-area: unset !important; /* Remove any grid-area influence */
+  background-color: #f8d7da; /* Light pastel red background */
+  border-radius: 12px; /* Rounded corners */
+  padding: 3px 20px; /* Add some padding for spacing */
+  opacity: 1;
+  transition: opacity 1s ease-out; /* Apply fade-out effect */
+}
+
+.tab-feedback-message.fade-out {
+  opacity: 0; /* Fade message */
+}
+
 /* Responsive Layout */
 @media (max-width: 768px) {
   .tab1-container {
-    padding: 10px;
+    padding: 0px;
   }
 
   .modal-content {
@@ -227,3 +292,4 @@
     font-size: 18px;
   }
 }
+

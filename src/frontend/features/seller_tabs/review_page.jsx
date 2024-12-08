@@ -7,6 +7,8 @@ import styled from "styled-components"; // Import styled-components
 import "./review_page.css"; // Your CSS file for styling
 
 // Styled Back Button Component
+const placeholderImage = "https://via.placeholder.com/100";
+
 const BackButton = styled(IoIosArrowBack)`
   font-size: 1.5rem;
   color: #333;
@@ -188,10 +190,15 @@ const ReviewPage = () => {
                 <span className="seller-label">Seller</span>
                 <span className="seller-name">Person 1</span>
             </div>
+            
             <div className="order-list">
                 {orderItems.map((item, index) => (
                     <div key={item.inventory_id} className="order-item">
-                        <img src={item.image} alt={item.name} className="item-image" />
+                        <img 
+                            src={item.image || placeholderImage} // Use the placeholder if image is not available
+                            alt={item.name} 
+                            className="item-image" 
+                        />
                         <div className="item-details">
                             <h3 className="item-name">{item.name}</h3>
                             <p className="item-price">₱ {item.price.toFixed(2)}</p>

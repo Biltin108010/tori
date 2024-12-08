@@ -391,6 +391,7 @@ body {
     background-color: #ddd; /* Light gray color for the divider */
     margin: 0px 0; /* Space above and below the divider */
   }
+  
   .close-modal-button {
     position: absolute;
     top: 15px;
