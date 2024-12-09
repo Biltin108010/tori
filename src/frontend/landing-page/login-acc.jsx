@@ -69,20 +69,6 @@ function SignInForm() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-      });
-
-      if (error) {
-        setErrorMessage('Google sign-in failed. Please try again.');
-      }
-    } catch (err) {
-      console.error('Google login error:', err);
-      setErrorMessage('An unexpected error occurred. Please try again.');
-    }
-  };
 
   return (
     <div className="wrapper">
@@ -135,16 +121,7 @@ function SignInForm() {
           Log in
         </button>
 
-        <div className="or-login-with">
-          <div className="divider">
-            <span className="divider-text">Or Login with</span>
-          </div>
-          <div className="social-icons">
-            <div className="social-icon google" onClick={handleGoogleLogin}>
-              <i className="fab fa-google"></i>
-            </div>
-          </div>
-        </div>
+      
 
         <div className="signuptext">
           Don't have an account?{' '}
