@@ -59,7 +59,7 @@ const Tab1 = ({ isEditing, handleEditMode }) => {
     fetchItems(); // Call fetchItems to get the latest data
   }, [userEmail]);
 
-  
+
 
   const handleDeleteProduct = async (id) => {
     try {
@@ -68,27 +68,27 @@ const Tab1 = ({ isEditing, handleEditMode }) => {
         .from("audit_logs") // Replace with your actual related table name
         .delete()
         .eq("item_id", id); // Assuming `item_id` is the foreign key field in `audit_logs`
-  
+
       if (auditLogsError) {
         console.error("Error deleting related audit logs:", auditLogsError.message);
         setFeedbackMessage("Failed to delete audit logs. Please try again.");
         setTimeout(() => setFeedbackMessage(''), 3000);
         return;
       }
-  
+
       // Then, delete the product from the inventory table
       const { error } = await supabase
         .from("inventory") // Replace with your actual table name
         .delete()
         .eq("id", id);
-  
+
       if (error) {
         console.error("Error deleting product:", error.message);
         setFeedbackMessage("Failed to delete the product. Please try again.");
         setTimeout(() => setFeedbackMessage(''), 3000);
         return;
       }
-  
+
       await fetchItems(); // Refresh the items after deletion
       setIsModalOpen(false);
       setFeedbackMessage("Product successfully deleted.");
@@ -99,7 +99,7 @@ const Tab1 = ({ isEditing, handleEditMode }) => {
       setTimeout(() => setFeedbackMessage(''), 3000);
     }
   };
-  
+
 
   const handleAddProduct = async (newItem) => {
     if (!userEmail) {
@@ -107,21 +107,21 @@ const Tab1 = ({ isEditing, handleEditMode }) => {
       setTimeout(() => setFeedbackMessage(''), 3000); // Clear the message after 3 seconds
       return;
     }
-  
+
     const itemWithEmail = { ...newItem, email: userEmail };
-  
+
     try {
       const { error } = await supabase
         .from("inventory") // Replace with your actual table name
         .insert([itemWithEmail]);
-  
+
       if (error) {
         console.error("Error adding item to database:", error.message);
         setFeedbackMessage("Failed to add the product. Please try again.");
         setTimeout(() => setFeedbackMessage(''), 3000); // Clear the message after 3 seconds
         return;
       }
-  
+
       await fetchItems(); // Fetch the latest items
       setIsModalOpen(false);
       setFeedbackMessage("Product successfully added!");
@@ -131,7 +131,7 @@ const Tab1 = ({ isEditing, handleEditMode }) => {
       setFeedbackMessage("An unexpected error occurred. Please try again.");
       setTimeout(() => setFeedbackMessage(''), 3000); // Clear the message after 3 seconds
     }
-  };  
+  };
 
   const handleEditProduct = async (updatedItem) => {
     try {
@@ -230,73 +230,73 @@ const Tab1 = ({ isEditing, handleEditMode }) => {
     setIsModalOpen(true);
   };
 
-const EditProductModal = ({ isOpen, onClose, item, onSave, onDelete }) => {
-  const [name, setName] = useState(item ? item.name : "");
-  const [quantity, setQuantity] = useState(item ? item.quantity : "");
-  const [price, setPrice] = useState(item ? item.price : "");
+  const EditProductModal = ({ isOpen, onClose, item, onSave, onDelete }) => {
+    const [name, setName] = useState(item ? item.name : "");
+    const [quantity, setQuantity] = useState(item ? item.quantity : "");
+    const [price, setPrice] = useState(item ? item.price : "");
 
-  const handleSave = () => {
-    if (name && quantity && price) {
-      onSave({
-        ...item,
-        name,
-        quantity: parseInt(quantity, 10),
-        price: parseFloat(price),
-      });
-    }
-  };
-
-  const handleDelete = () => {
-    if (item) {
-      const confirmed = window.confirm(
-        "Are you sure you want to delete this product?"
-      );
-      if (confirmed) {
-        onDelete(item.id);
+    const handleSave = () => {
+      if (name && quantity && price) {
+        onSave({
+          ...item,
+          name,
+          quantity: parseInt(quantity, 10),
+          price: parseFloat(price),
+        });
       }
-    }
-  };
+    };
 
-  if (!isOpen) return null;
+    const handleDelete = () => {
+      if (item) {
+        const confirmed = window.confirm(
+          "Are you sure you want to delete this product?"
+        );
+        if (confirmed) {
+          onDelete(item.id);
+        }
+      }
+    };
 
-  return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h2>{item ? "Edit Product" : "Add Product"}</h2>
-        <label>
-          Name:
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Product Name"
-          />
-        </label>
-        <label>
-          Quantity:
-          <input
-            type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            placeholder="Quantity"
-          />
-        </label>
-        <label>
-          Price:
-          <input
-            type="text"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            placeholder="Price"
-          />
-        </label>
-        <button onClick={handleSave}>{item ? "Save" : "Add"}</button>
-        {item && <button onClick={handleDelete}>Delete</button>}
-        <button onClick={onClose}>Cancel</button>
+    if (!isOpen) return null;
+
+    return (
+      <div className="modal-overlay">
+        <div className="modal-content">
+          <h2>{item ? "Edit Product" : "Add Product"}</h2>
+          <label>
+            Name:
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Product Name"
+            />
+          </label>
+          <label>
+            Quantity:
+            <input
+              type="number"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              placeholder="Quantity"
+            />
+          </label>
+          <label>
+            Price:
+            <input
+              type="text"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Price"
+            />
+          </label>
+          <button onClick={handleSave}>{item ? "Save" : "Add"}</button>
+          {item && <button onClick={handleDelete}>Delete</button>}
+          <button onClick={onClose}>Cancel</button>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 
   if (navigateToReview) {
@@ -316,21 +316,18 @@ const EditProductModal = ({ isOpen, onClose, item, onSave, onDelete }) => {
       const { data: teamData, error: teamError } = await supabase
         .from("team")
         .select("team_num")
-        .eq("invite", userEmail) // Use 'invite' instead of 'email'
+        .eq("invite", userEmail)
         .single();
 
-      if (teamError) {
+      if (teamError && teamError.code !== 'PGRST116') {
+        // Handle errors that are not "No rows found" (PGRST116)
         console.error("Error fetching team number:", teamError.message);
         setFeedbackMessage("Failed to fetch team information.");
+        setTimeout(() => setFeedbackMessage(''), 3000);
         return;
       }
 
-      const teamNum = teamData?.team_num;
-
-      if (!teamNum) {
-        setFeedbackMessage("Team number not found for the user.");
-        return;
-      }
+      const teamNum = teamData?.team_num || null; // Default to null if no team_num is found
 
       // Check if the item already has the inventory_id
       let inventoryId = item.inventory_id;
@@ -349,7 +346,7 @@ const EditProductModal = ({ isOpen, onClose, item, onSave, onDelete }) => {
           return;
         }
 
-        inventoryId = inventoryData?.id;
+        inventoryId = inventoryData?.id || null;
 
         if (!inventoryId) {
           setFeedbackMessage("Inventory item not found.");
@@ -358,13 +355,13 @@ const EditProductModal = ({ isOpen, onClose, item, onSave, onDelete }) => {
         }
       }
 
-      // Prepare the duplicated item with the team_num included
+      // Prepare the duplicated item with the team_num included (or null)
       const duplicatedItem = {
         name: item.name,
         quantity: item.quantity,
         price: item.price,
         email: userEmail,
-        team_num: teamNum, // Include the team_num
+        team_num: teamNum, // Include the team_num or pass null
         created_at: new Date().toISOString(),
         inventory_id: inventoryId,
       };
@@ -389,6 +386,7 @@ const EditProductModal = ({ isOpen, onClose, item, onSave, onDelete }) => {
   };
 
 
+
   // Fetch cart items to navigate to the ReviewPage
   const handleNavigateToReview = async () => {
     try {
@@ -396,14 +394,14 @@ const EditProductModal = ({ isOpen, onClose, item, onSave, onDelete }) => {
         .from("add_cart")
         .select("*")
         .eq("email", userEmail); // Filter by user email
-  
+
       if (error) {
         console.error("Error fetching cart items:", error.message);
         setFeedbackMessage("Failed to fetch cart items.");
         setTimeout(() => setFeedbackMessage(''), 3000); // Remove message after 3 seconds
         return;
       }
-  
+
       navigate("/seller/review", { state: { items: data } }); // Pass cart items to ReviewPage
     } catch (err) {
       console.error("Unexpected error:", err.message);
@@ -411,7 +409,7 @@ const EditProductModal = ({ isOpen, onClose, item, onSave, onDelete }) => {
       setTimeout(() => setFeedbackMessage(''), 3000); // Remove message after 3 seconds
     }
   };
-  
+
 
 
   return (

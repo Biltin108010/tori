@@ -82,15 +82,16 @@
   background-color: #ffffff;
   display: grid; /* Use grid layout */
   grid-template-columns: repeat(2, 1fr); /* Two items per row */
-  gap: 20px; /* Add spacing between grid items */
+  gap: 10px; /* Add spacing between grid items */
   justify-items: center; /* Horizontally center the items */
   align-items: center; /* Vertically center the items */
+  margin-left: -5px;
 }
 /* Item Box Layout */
 .item-box {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   background-color: white;
   padding: 10px;
   border-radius: 8px;
@@ -157,7 +158,7 @@
 
 .plus-icon {
   color: #333;
-  margin-left: 60px;
+  margin-left: 50px;
 }
 
 .plus-icon:hover {

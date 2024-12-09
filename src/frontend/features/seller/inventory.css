@@ -6,6 +6,7 @@
   overflow-y: auto;
   /* Enables vertical scrolling */
   padding: 10px;
+  padding-bottom: 40px;
   /* Adds spacing around content */
   background-color: #ffffff;
   /* Light background */

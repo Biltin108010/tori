@@ -2,7 +2,7 @@
   font-family: 'Inter', sans-serif;
   background-color: #fdfdfd;
   padding: 20px;
-  padding-bottom: 0px; /* Bottom padding ensures footer doesn't overlap */
+  padding-bottom: 30px; /* Bottom padding ensures footer doesn't overlap */
   height: 100vh;
   overflow-y: auto;
   }

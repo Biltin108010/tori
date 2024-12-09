@@ -44,31 +44,30 @@ function History() {
           return;
         }
 
-        if (!teamData || teamData.length === 0) {
-          console.error('No team data found');
-          return;
+        let teamEmails = [userEmail]; // Default to user's own email
+        if (teamData && teamData.length > 0) {
+          // If the user has a team, fetch all team members
+          const userTeamNum = teamData[0]?.team_num; // Get the team number from the data
+          setUserTeamNum(userTeamNum); // Store the team number in state
+
+          const { data: teamMembers, error: teamMembersError } = await supabase
+            .from('team')
+            .select('invite')
+            .eq('team_num', userTeamNum); // Query all users in the same team
+
+          if (teamMembersError) {
+            console.error('Error fetching team members:', teamMembersError.message);
+            return;
+          }
+
+          teamEmails = teamMembers.map((member) => member.invite); // Get all user emails in the team
         }
 
-        const userTeamNum = teamData[0]?.team_num; // Get the team number from the data
-
-        // Fetch all team members based on the team number
-        const { data: teamMembers, error: teamMembersError } = await supabase
-          .from('team')
-          .select('invite')
-          .eq('team_num', userTeamNum); // Query all users in the same team
-
-        if (teamMembersError) {
-          console.error('Error fetching team members:', teamMembersError.message);
-          return;
-        }
-
-        const teamEmails = teamMembers.map((member) => member.invite); // Get all user emails in the team
-
-        // Now fetch the history logs for all team members
+        // Fetch the history logs for the user or the team
         const { data: historyData, error: historyError } = await supabase
           .from('audit_logs')
           .select('name, email, price, quantity, created_at')
-          .in('email', teamEmails)  // Pass the array of emails for all team members
+          .in('email', teamEmails) // Pass the array of emails for user/team members
           .eq('action', 'DEDUCTION');
 
         if (historyError) {
@@ -92,7 +91,6 @@ function History() {
 
         setHistoryData(formattedData);
         setFilteredData(formattedData); // Initialize filtered data
-
       } catch (err) {
         console.error('Unexpected error fetching history:', err.message);
       }
@@ -100,6 +98,7 @@ function History() {
 
     fetchHistory();
   }, []); // Empty dependency array ensures this runs only once when the component mounts
+
 
   // Handle dropdown selection for date filter
   const handleDateChange = (event) => {
@@ -165,7 +164,7 @@ function History() {
       <header className="history-header">
         <h1 className="history-title">History</h1>
         <div className="home-logo-container">
-        <img src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png" alt="Logo" className="home-logo" />
+          <img src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png" alt="Logo" className="home-logo" />
         </div>
       </header>
 
@@ -222,13 +221,13 @@ function History() {
               </div>
             </div>
             <div class="amount-date">
-            <div class="amount">₱ {item.totalPrice.toFixed(2)}</div>
-            <div class="history-quantity">(Qty: {item.quantity})</div>
-            <div class="sub-date">
-              <div>{new Date(item.created_at).toLocaleDateString()}</div>
-              <div>{new Date(item.created_at).toLocaleTimeString()}</div>
+              <div class="amount">₱ {item.totalPrice.toFixed(2)}</div>
+              <div class="history-quantity">(Qty: {item.quantity})</div>
+              <div class="sub-date">
+                <div>{new Date(item.created_at).toLocaleDateString()}</div>
+                <div>{new Date(item.created_at).toLocaleTimeString()}</div>
+              </div>
             </div>
-          </div>
           </div>
         ))}
       </div>

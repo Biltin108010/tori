@@ -38,35 +38,51 @@ const ReviewPage = () => {
             }
 
             try {
-                // Get team number for the user
+                // Fetch the user's team number
                 const { data: teamData, error: teamError } = await supabase
                     .from("team")
                     .select("team_num")
                     .eq("invite", userEmail)
                     .single();
 
+                let itemsData;
+
                 if (teamError || !teamData) {
-                    setFeedbackMessage("Failed to fetch team information.");
-                    return;
-                }
+                    // User does not belong to a team; fetch individual items
+                    console.warn("No team found for user. Fetching individual cart items.");
 
-                const teamNum = teamData.team_num;
+                    const { data: individualItems, error: individualError } = await supabase
+                        .from("add_cart")
+                        .select("*")
+                        .eq("email", userEmail); // Fetch only the user's cart items
 
-                // Fetch items for all team members
-                const { data: itemsData, error: itemsError } = await supabase
-                    .from("add_cart")
-                    .select("*")
-                    .eq("team_num", teamNum);
+                    if (individualError) {
+                        setFeedbackMessage("Failed to fetch individual cart items.");
+                        return;
+                    }
 
-                if (itemsError) {
-                    setFeedbackMessage("Failed to fetch team cart items.");
-                    return;
+                    itemsData = individualItems;
+                } else {
+                    // User belongs to a team; fetch team-related items
+                    const teamNum = teamData.team_num;
+
+                    const { data: teamItems, error: teamItemsError } = await supabase
+                        .from("add_cart")
+                        .select("*")
+                        .eq("team_num", teamNum); // Fetch items for all team members
+
+                    if (teamItemsError) {
+                        setFeedbackMessage("Failed to fetch team cart items.");
+                        return;
+                    }
+
+                    itemsData = teamItems;
                 }
 
                 setOrderItems(
                     (itemsData || []).map((item) => ({
                         ...item,
-                        counter: 1,
+                        counter: 1, // Initialize counters for each item
                     }))
                 );
             } catch (err) {
@@ -77,6 +93,7 @@ const ReviewPage = () => {
 
         fetchCartItems();
     }, [userEmail]);
+
 
     const handleRemoveItem = async (itemId) => {
         try {
@@ -190,14 +207,14 @@ const ReviewPage = () => {
                 <span className="seller-label">Seller</span>
                 <span className="seller-name">Person 1</span>
             </div>
-            
+
             <div className="order-list">
                 {orderItems.map((item, index) => (
                     <div key={item.inventory_id} className="order-item">
-                        <img 
+                        <img
                             src={item.image || placeholderImage} // Use the placeholder if image is not available
-                            alt={item.name} 
-                            className="item-image" 
+                            alt={item.name}
+                            className="item-image"
                         />
                         <div className="item-details">
                             <h3 className="item-name">{item.name}</h3>

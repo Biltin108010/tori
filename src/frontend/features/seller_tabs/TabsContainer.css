@@ -99,12 +99,6 @@
   margin-top: -10px;
 }
 
-
-.tab-container .edit-button:hover {
-  background-color: #333; /* Darker black on hover */
-  color: #fff;
-}
-
 /* Back Button */
 .back-button-container {
   display: flex;
@@ -150,10 +144,6 @@
 
 .tab-container .tab:last-child {
   border-right: none; /* Removes the right border for the last tab */
-}
-
-.tab-container .tab:hover {
-  background-color: #eaeaea; /* Slightly darker gray for hover effect */
 }
 
 .tab-container .active-tab {

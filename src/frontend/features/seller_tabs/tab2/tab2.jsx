@@ -95,6 +95,7 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
   const duplicateItem = async (item) => {
     if (!userEmail) {
       setFeedbackMessage("You must be logged in to duplicate a product.");
+      setTimeout(() => setFeedbackMessage(''), 3000);
       return;
     }
 
@@ -103,21 +104,18 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
       const { data: teamData, error: teamError } = await supabase
         .from("team")
         .select("team_num")
-        .eq("invite", userEmail) // Use 'invite' instead of 'email'
+        .eq("invite", userEmail)
         .single();
 
-      if (teamError) {
+      if (teamError && teamError.code !== 'PGRST116') {
+        // Handle errors that are not "No rows found" (PGRST116)
         console.error("Error fetching team number:", teamError.message);
         setFeedbackMessage("Failed to fetch team information.");
+        setTimeout(() => setFeedbackMessage(''), 3000);
         return;
       }
 
-      const teamNum = teamData?.team_num;
-
-      if (!teamNum) {
-        setFeedbackMessage("Team number not found for the user.");
-        return;
-      }
+      const teamNum = teamData?.team_num || null; // Default to null if no team_num is found
 
       // Check if the item already has the inventory_id
       let inventoryId = item.inventory_id;
@@ -136,7 +134,7 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
           return;
         }
 
-        inventoryId = inventoryData?.id;
+        inventoryId = inventoryData?.id || null;
 
         if (!inventoryId) {
           setFeedbackMessage("Inventory item not found.");
@@ -145,13 +143,13 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
         }
       }
 
-      // Prepare the duplicated item with the team_num included
+      // Prepare the duplicated item with the team_num included (or null)
       const duplicatedItem = {
         name: item.name,
         quantity: item.quantity,
         price: item.price,
         email: userEmail,
-        team_num: teamNum, // Include the team_num
+        team_num: teamNum, // Include the team_num or pass null
         created_at: new Date().toISOString(),
         inventory_id: inventoryId,
       };
@@ -174,6 +172,7 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
       setTimeout(() => setFeedbackMessage(''), 3000);
     }
   };
+
 
 
   const handleNavigateToReview = async () => {
@@ -205,13 +204,13 @@ const Tab2 = ({ userEmail, userTeamEmails }) => {
           <p>{feedbackMessage}</p>
         </div>
       )}
-  
+
       {isApproved === false && !isSearching && (
         <div className="waiting-for-approval">
           <p>Waiting for approval.</p>
         </div>
       )}
-  
+
       {isApproved === true && items.length > 0 && (
         <div className="tab1-container">
           {items.map((item) => (
