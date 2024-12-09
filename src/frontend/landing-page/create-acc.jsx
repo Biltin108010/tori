@@ -174,18 +174,6 @@ const SignupPage = () => {
           </button>
         </form>
 
-        {/* Or Register with section */}
-        <div className="or-login-with">
-          <div className="divider">
-            <span className="divider-text">Or Register with</span>
-          </div>
-          <div className="social-icons">
-            <div className="social-icon google">
-              <i className="fab fa-google"></i>
-            </div>
-          </div>
-        </div>
-
         {/* Error message */}
         {error && <div className="error-message">{error}</div>}
 
