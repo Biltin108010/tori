@@ -63,14 +63,14 @@ function Profile() {
   return (
     <div className="profile-container">
       <div className="profile-scrollable">
-      <div className="home-page-header">
-        <h1 className="home-title">Profile</h1>
-        <div className="logo">
-          <img src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png" alt="Logo" width={68} height={68} />
+        <div className="home-page-header">
+          <h1 className="home-title">Profile</h1>
+          <div className="logo">
+            <img src="https://res.cloudinary.com/dcd5cnr4m/image/upload/v1733254195/Untitled_design_7_td7pot.png" alt="Logo" width={68} height={68} />
+          </div>
         </div>
-      </div>
 
-      <div className="home-divider"></div>
+        <div className="home-divider"></div>
 
         <div className="profile-header">
           <div className="profile-image-wrapper">
@@ -99,36 +99,39 @@ function Profile() {
 
         <div className="separator" />
 
-        <button
-          className="action-button"
-          onClick={() => navigate("/seller/edit-profile")}
-        >
-          <div className="action-icon">
-            <AiOutlineEdit />
-          </div>
-          Edit Profile Information
-        </button>
-        <button className="action-button">
-          <div className="action-icon">
-            <AiOutlineSetting />
-          </div>
-          Settings
-        </button>
-        <button
-        className="action-button"
-        onClick={() => navigate("/seller/invite-team")} // Navigate to the Invite Team page
-      >
-        <div className="action-icon">
-          <AiOutlineEdit />
+        {/* Scrollable Actions Container */}
+        <div className="actions-container">
+          <button
+            className="action-button"
+            onClick={() => navigate("/seller/edit-profile")}
+          >
+            <div className="action-icon">
+              <AiOutlineEdit />
+            </div>
+            Edit Profile Information
+          </button>
+          <button className="action-button">
+            <div className="action-icon">
+              <AiOutlineSetting />
+            </div>
+            Settings
+          </button>
+          <button
+            className="action-button"
+            onClick={() => navigate("/seller/invite-team")}
+          >
+            <div className="action-icon">
+              <AiOutlineEdit />
+            </div>
+            Invite Team
+          </button>
+          <button className="action-button danger" onClick={handleLogout}>
+            <div className="action-icon danger">
+              <AiOutlineLogout />
+            </div>
+            Logout
+          </button>
         </div>
-        Invite Team
-      </button>
-        <button className="action-button danger" onClick={handleLogout}>
-          <div className="action-icon danger">
-            <AiOutlineLogout />
-          </div>
-          Logout
-        </button>
       </div>
 
       <div className="footer">

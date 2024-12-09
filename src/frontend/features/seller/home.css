@@ -15,10 +15,14 @@ body {
 }
 
 .home-page-header {
-  display: flex;                /* Align items in a row */
-  justify-content: space-between; /* Push title and logo to opposite sides */
-  align-items: center;          /* Vertically center the items */
-  margin-bottom: 10px;          /* Optional spacing below header */
+  display: flex;
+  /* Align items in a row */
+  justify-content: space-between;
+  /* Push title and logo to opposite sides */
+  align-items: center;
+  /* Vertically center the items */
+  margin-bottom: 10px;
+  /* Optional spacing below header */
 }
 
 .home-title {
@@ -26,61 +30,83 @@ body {
   font-size: 2.5rem;
   font-weight: 800;
   color: #333;
-  margin: 0;                    /* Remove default margin */
+  margin: 0;
+  /* Remove default margin */
 }
 
 .home-logo-container {
-  display: flex;                /* Ensure logo container behaves flexibly */
-  align-items: center;          /* Vertically align logo with title */
+  display: flex;
+  /* Ensure logo container behaves flexibly */
+  align-items: center;
+  /* Vertically align logo with title */
 }
 
 .home-logo {
-  max-width: 68px;              /* Restrict max width */
-  height: auto;                 /* Maintain aspect ratio */
+  max-width: 68px;
+  /* Restrict max width */
+  height: auto;
+  /* Maintain aspect ratio */
 }
 
 /* Header */
 
-  
-  .home-controls {
-    display: flex;
-    gap: 15px; /* Increased gap for better spacing between elements */
-    justify-content: center;
-    width: 100%; /* Make the container take full width */
-    max-width: 1200px; /* Optional: Limit the maximum width to prevent stretching too far */
-    margin: 0 auto; /* Center the controls container */
-    margin-bottom: 15px; 
-  }
-  
-  .home-dropdown {
-    padding: 10px 35px 10px 35px ; /* Increased padding for a larger dropdown */
-    font-size: 14px;
-    font-weight: 600;
-    border: 1px solid #2c2c2c;
-    border-radius: 15px;
-    font-family: 'Inter', sans-serif;
-    background-color: #2E2D2D;
-    cursor: pointer;
-    width: 100%; /* Make the dropdown occupy the full available width */
-    max-width: 300px; /* Optional: Set a max-width for the dropdown */
-    color: #ffffff;
-  }
-  
-  .home-export-button,
-  .home-filter-button {
-    background: #ddd;
-    border: 3px solid #ddd;
-    padding: 10px 25px; /* Increased padding for larger buttons */
-    font-family: 'Inter', sans-serif;
-    font-size: 14px; /* Slightly larger font size */
-    font-weight: 600;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%; /* Make buttons take up the full available width */
-    max-width: 200px; /* Optional: Set a max-width for buttons */
-  }
-  
+
+.home-controls {
+  display: flex;
+  gap: 15px;
+  /* Increased gap for better spacing between elements */
+  justify-content: center;
+  width: 100%;
+  /* Make the container take full width */
+  max-width: 1200px;
+  /* Optional: Limit the maximum width to prevent stretching too far */
+  margin: 0 auto;
+  /* Center the controls container */
+  margin-bottom: 15px;
+}
+
+.home-dropdown {
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid #2c2c2c;
+  border-radius: 15px;
+  font-family: 'Inter', sans-serif;
+  background-color: #2E2D2D;
+  color: #ffffff;
+  width: 100%;
+  max-width: 300px;
+  cursor: pointer;
+  box-sizing: border-box;
+  appearance: none;
+  /* Remove native dropdown styles */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath fill='%23ffffff' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  /* Position arrow */
+  background-size: 12px 8px;
+  /* Size of the arrow */
+}
+
+.home-export-button,
+.home-filter-button {
+  background: #ddd;
+  border: 3px solid #ddd;
+  padding: 10px 25px;
+  /* Increased padding for larger buttons */
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  /* Slightly larger font size */
+  font-weight: 600;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  /* Make buttons take up the full available width */
+  max-width: 200px;
+  /* Optional: Set a max-width for buttons */
+}
+
 
 /* Card Section */
 .home-card-section {
@@ -90,17 +116,21 @@ body {
 }
 
 .home-card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 20px rgba(0, 0, 0, 0.1); /* Stronger shadow for a raised effect */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover */
-  }
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 20px rgba(0, 0, 0, 0.1);
+  /* Stronger shadow for a raised effect */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* Smooth transition for hover */
+}
 
-  .home-card:hover {
-    transform: translateY(-10px); /* Lift the card slightly */
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); /* Stronger shadow when hovering */
-  }
+.home-card:hover {
+  transform: translateY(-10px);
+  /* Lift the card slightly */
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  /* Stronger shadow when hovering */
+}
 
 .home-card-header {
   display: flex;
@@ -154,59 +184,77 @@ body {
 /* Total Profit Section */
 /* Total Profit Section */
 .home-profit-section {
-    margin-top: 30px;
-    padding-bottom: 120px; /* Space above the sticky footer */
-  }
-  
-  .home-profit-cards {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px; /* Bigger gap between cards */
-    flex-wrap: wrap;  /* Allow cards to wrap to the next line */
-    max-width: 100%;  /* Ensure the container doesn't overflow */
-  }
-  
-  /* Total Profit Section */
+  margin-top: 30px;
+  padding-bottom: 120px;
+  /* Space above the sticky footer */
+}
+
+.home-profit-cards {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  /* Bigger gap between cards */
+  flex-wrap: wrap;
+  /* Allow cards to wrap to the next line */
+  max-width: 100%;
+  /* Ensure the container doesn't overflow */
+}
+
+/* Total Profit Section */
+.home-profit-card {
+  background: white;
+  padding: 20px;
+  /* Adjust padding for mobile devices */
+  border-radius: 16px;
+  /* Modern rounded corners */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 20px rgba(0, 0, 0, 0.1);
+  /* Stronger shadow for lifted effect */
+  text-align: center;
+  flex: 1 1 calc(100% - 20px);
+  /* Full width on smaller screens */
+  box-sizing: border-box;
+  /* Account for padding */
+  margin-bottom: 20px;
+  /* Space below each card */
+  border: 1px solid #f3efef;
+  /* Light border to separate from background */
+  background-color: #ffffff;
+  transition: box-shadow 0.3s ease;
+  /* Smooth shadow transition */
+}
+
+
+
+@media (max-width: 768px) {
   .home-profit-card {
-    background: white;
-    padding: 20px; /* Adjust padding for mobile devices */
-    border-radius: 16px; /* Modern rounded corners */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 20px rgba(0, 0, 0, 0.1); /* Stronger shadow for lifted effect */
-    text-align: center;
-    flex: 1 1 calc(100% - 20px); /* Full width on smaller screens */
-    box-sizing: border-box; /* Account for padding */
-    margin-bottom: 20px; /* Space below each card */
-    border: 1px solid #f3efef; /* Light border to separate from background */
-    background-color: #ffffff;
-    transition: box-shadow 0.3s ease; /* Smooth shadow transition */
+    flex: 1 1 calc(50% - 20px);
+    /* For tablets and smaller screens, cards take 50% width */
   }
-  
-  
-  
-  @media (max-width: 768px) {
-    .home-profit-card {
-      flex: 1 1 calc(50% - 20px); /* For tablets and smaller screens, cards take 50% width */
-    }
+}
+
+@media (max-width: 480px) {
+  .home-profit-card {
+    flex: 1 1 100%;
+    /* For small screens, cards will stack on top of each other */
   }
-  
-  @media (max-width: 480px) {
-    .home-profit-card {
-      flex: 1 1 100%; /* For small screens, cards will stack on top of each other */
-    }
-  }
-  .profit-value {
-    font-size: 2.5rem; /* Larger font size for clarity */
-    font-weight: 900;
-    color: #333;
-    margin-bottom: 5px; /* Space between value and percentage */
-  }
-  
-  .profit-percentage {
-    font-size: 1.4rem; /* Bigger percentage text */
-    color: #27ae60;
-    margin-bottom: -15px;
-  }
-  
+}
+
+.profit-value {
+  font-size: 2.5rem;
+  /* Larger font size for clarity */
+  font-weight: 900;
+  color: #333;
+  margin-bottom: 5px;
+  /* Space between value and percentage */
+}
+
+.profit-percentage {
+  font-size: 1.4rem;
+  /* Bigger percentage text */
+  color: #27ae60;
+  margin-bottom: -15px;
+}
+
 
 /* Footer */
 .home-footer {
@@ -256,13 +304,14 @@ body {
   max-width: 400px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   text-align: center;
-  position: relative; /* Ensures button aligns properly */
+  position: relative;
+  /* Ensures button aligns properly */
 }
 
 .close-filter {
   position: absolute;
-  top: 15px; 
-  right: 15px; 
+  top: 15px;
+  right: 15px;
   background: none;
   border: none;
   font-size: 1.5rem;
@@ -346,6 +395,7 @@ body {
     width: 95%;
     padding: 15px;
   }
+
   .filter-buttons button {
     font-size: 0.9rem;
     padding: 8px 15px;
@@ -354,59 +404,64 @@ body {
 
 
 
-  
-  /* Profit Section */
-  .home-profit-section {
-    margin-top: 30px;
-  }
-  
-  .home-section-title {
-    font-family: 'Inter', sans-serif;
-    font-size: 30px;
-    font-weight: 900;
-    margin-bottom: 10px;
-    margin-left: 5px;
-  }
-  
-  .home-profit-cards {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .home-profit-card {
-    text-align: center;
-    flex: 1;
-    margin: 0 10px;
-    background: white;
-    padding: 20px;
-    border-radius: 12px; /* Slightly rounder corners for a smoother, more modern look */
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2); /* Softer shadow for more depth */
-    transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
-    cursor: pointer; /* Indicate it's clickable if used in interactive UI */
-  }
-  
-  .home-divider {
-    width: 100%;
-    height: 1px;
-    background-color: #ddd; /* Light gray color for the divider */
-    margin: 0px 0; /* Space above and below the divider */
-  }
-  
-  .close-modal-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    font-family: 'Poppins', sans-serif;
-    font-weight: bold;
-    color: #333;
-    cursor: pointer;
-    z-index: 1001;
-    transition: color 0.2s ease;
-  }
-  
-  .close-modal-button:hover {
-    color: #007bff;
-  }
+
+/* Profit Section */
+.home-profit-section {
+  margin-top: 30px;
+}
+
+.home-section-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 30px;
+  font-weight: 900;
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
+
+.home-profit-cards {
+  display: flex;
+  justify-content: space-between;
+}
+
+.home-profit-card {
+  text-align: center;
+  flex: 1;
+  margin: 0 10px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  /* Slightly rounder corners for a smoother, more modern look */
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+  /* Softer shadow for more depth */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
+  /* Indicate it's clickable if used in interactive UI */
+}
+
+.home-divider {
+  width: 100%;
+  height: 1px;
+  background-color: #ddd;
+  /* Light gray color for the divider */
+  margin: 0px 0;
+  /* Space above and below the divider */
+}
+
+.close-modal-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  z-index: 1001;
+  transition: color 0.2s ease;
+}
+
+.close-modal-button:hover {
+  color: #007bff;
+}
