@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/tori/static/css/main.8ad63313.css",
-    "main.js": "/tori/static/js/main.99377f4f.js",
+    "main.css": "/tori/static/css/main.7f23c421.css",
+    "main.js": "/tori/static/js/main.05569241.js",
     "static/js/952.e4c69efe.chunk.js": "/tori/static/js/952.e4c69efe.chunk.js",
     "static/js/453.da11abd0.chunk.js": "/tori/static/js/453.da11abd0.chunk.js",
     "index.html": "/tori/index.html",
-    "main.8ad63313.css.map": "/tori/static/css/main.8ad63313.css.map",
-    "main.99377f4f.js.map": "/tori/static/js/main.99377f4f.js.map",
+    "main.7f23c421.css.map": "/tori/static/css/main.7f23c421.css.map",
+    "main.05569241.js.map": "/tori/static/js/main.05569241.js.map",
     "952.e4c69efe.chunk.js.map": "/tori/static/js/952.e4c69efe.chunk.js.map",
     "453.da11abd0.chunk.js.map": "/tori/static/js/453.da11abd0.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.8ad63313.css",
-    "static/js/main.99377f4f.js"
+    "static/css/main.7f23c421.css",
+    "static/js/main.05569241.js"
   ]
 }
