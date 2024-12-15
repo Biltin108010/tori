@@ -2,49 +2,97 @@ import React, { useEffect, useState } from "react";
 import { AiOutlineEdit, AiOutlineSetting, AiOutlineLogout } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../../backend/supabaseClient"; // Import your Supabase client
-import "./profile.css"; // Import the CSS file for styling
 import { FiEdit3 } from "react-icons/fi";
-
+import "./profile.css"; // Import the CSS file for styling
 
 function Profile() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null); // Stores user data
   const [loading, setLoading] = useState(true); // Loading state
+  const [teamMembers, setTeamMembers] = useState([]); // Store team members
+  const [totalUsers, setTotalUsers] = useState(0); // Total users state (if you want to display the total count)
+  const [totalItems, setTotalItems] = useState(0); // Total distinct items in the user's inventory
+
+  const fetchData = async () => {
+    try {
+      // Fetch user details
+      const { data: userInfo, error: userError } = await supabase.auth.getUser();
+      if (userError) {
+        console.error("Error fetching user:", userError.message);
+        return;
+      }
+
+      const userEmail = userInfo?.user?.email;
+
+      if (!userEmail) {
+        console.error("User email not found.");
+        return;
+      }
+
+      // Set the user info in the state (user data)
+      setUser(userInfo.user);
+
+      // Fetch user's team number
+      let userTeamNum;
+      const { data: teamInfo, error: teamError } = await supabase
+        .from("team")
+        .select("team_num")
+        .eq("invite", userEmail);
+
+      if (teamError) {
+        console.error("Error fetching team information:", teamError.message);
+        return;
+      }
+
+      userTeamNum = teamInfo?.[0]?.team_num;
+
+      // Fetch all team members' emails (if user is in a team)
+      if (userTeamNum) {
+        const { data: teamData, error: teamDataError } = await supabase
+          .from("team")
+          .select("invite")
+          .eq("team_num", userTeamNum);
+
+        if (teamDataError) {
+          console.error("Error fetching team members:", teamDataError.message);
+          return;
+        }
+
+        // Store team members in state
+        setTeamMembers(teamData.map((member) => member.invite));
+
+        // Fetch total number of users in the current team
+        const { count } = await supabase
+          .from("team")
+          .select("*", { count: "exact" })
+          .eq("team_num", userTeamNum); // Filter by team number
+        setTotalUsers(count);
+      }
+
+      // Fetch user's inventory items
+      const { data: inventoryData, error: inventoryError } = await supabase
+        .from("inventory")
+        .select("name")
+        .eq("email", userEmail);
+
+      if (inventoryError) {
+        console.error("Error fetching inventory items:", inventoryError.message);
+        return;
+      }
+
+      // Count the number of distinct items in the user's inventory
+      const distinctItems = new Set(inventoryData.map((item) => item.name)); // Create a Set of unique item names
+      setTotalItems(distinctItems.size); // Set the size of the Set as total distinct items
+
+    } catch (error) {
+      console.error("Unexpected error:", error.message);
+    } finally {
+      setLoading(false); // Stop loading spinner after data is fetched
+    }
+  };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        // Get the logged-in user
-        const { data: { user }, error } = await supabase.auth.getUser();
-
-        if (error) {
-          console.error("Error fetching auth user:", error.message);
-          setLoading(false);
-          return;
-        }
-
-        // Fetch user details from your database using the user's email
-        const { data, error: queryError } = await supabase
-          .from("users") // Replace with your actual table name
-          .select("*")
-          .eq("email", user.email) // Match by email
-          .single(); // Retrieve a single row
-
-        if (queryError) {
-          console.error("Error fetching user from DB:", queryError.message);
-          setLoading(false);
-          return;
-        }
-
-        setUser(data); // Update state with the fetched user
-      } catch (err) {
-        console.error("Unexpected error:", err.message);
-      } finally {
-        setLoading(false); // Stop loading spinner
-      }
-    };
-
-    fetchUser();
+    fetchData();
   }, []);
 
   const handleLogout = async () => {
@@ -80,7 +128,6 @@ function Profile() {
               alt="Profile"
             />
             <FiEdit3 size={24} className="selleredit-button" />
-
           </div>
           <h2 className="name">{user?.username || "Your Name"}</h2>
           <p className="contact">{user?.email || "your.email@example.com"}</p>
@@ -88,11 +135,11 @@ function Profile() {
 
         <div className="stats-container">
           <div className="stat">
-            <p className="stat-value">3</p>
+            <p className="stat-value">{totalUsers}</p> {/* Display total number of users */}
             <p className="stat-label">Users</p>
           </div>
           <div className="stat">
-            <p className="stat-value">10</p>
+            <p className="stat-value">{totalItems}</p> {/* Display total distinct items */}
             <p className="stat-label">Items</p>
           </div>
         </div>
@@ -125,12 +172,28 @@ function Profile() {
             </div>
             Invite Team
           </button>
-          <button className="action-button danger" onClick={handleLogout}>
+          <button
+            className="action-button danger"
+            onClick={handleLogout}
+          >
             <div className="action-icon danger">
               <AiOutlineLogout />
             </div>
             Logout
           </button>
+        </div>
+
+        <div className="team-members">
+          <h3>Team Members</h3>
+          <ul>
+            {teamMembers.length > 0 ? (
+              teamMembers.map((member, index) => (
+                <li key={index}>{member}</li>
+              ))
+            ) : (
+              <p>No team members found.</p>
+            )}
+          </ul>
         </div>
       </div>
 

@@ -1,13 +1,13 @@
-'use client';
-
 import React, { useEffect, useState } from 'react';
 import { IoIosArrowBack } from 'react-icons/io';
+import { FaPlus } from 'react-icons/fa'; // Icon for the "+" tab
 import Tab1 from './tab1/tab1';
 import Tab2 from './tab2/tab2';
 import Tab3 from './tab3/tab3';
 import './TabsContainer.css';
 import supabase from '../../../backend/supabaseClient';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 export default function TabContainer() {
   const [activeTab, setActiveTab] = useState(0);
@@ -22,6 +22,10 @@ export default function TabContainer() {
   const [userTeamEmails, setUserTeamEmails] = useState([]); 
   const [teamNum, setTeamNum] = useState(null); 
   const [approvalStatus, setApprovalStatus] = useState(null); 
+  const [isInTeam, setIsInTeam] = useState(false); // Tracks if the user is in a team
+  const [isPendingInvite, setIsPendingInvite] = useState(false); // Track if the invite is pending
+
+  const navigate = useNavigate();
 
   // Style the Back Button with styled-components (if needed)
   const BackButton = styled(IoIosArrowBack)`
@@ -69,9 +73,15 @@ export default function TabContainer() {
 
         if (teamError) {
           console.error('Error fetching team data:', teamError);
+          setIsInTeam(false); // User not found in team table
         } else if (teamData) {
           setTeamNum(teamData.team_num);
           setApprovalStatus(teamData.approved);
+          setIsInTeam(true); // User is part of a team
+
+          if (teamData.approved === false) {
+            setIsPendingInvite(true); // User's invite is pending
+          }
 
           const { data: teamMembers, error: membersError } = await supabase
             .from('team')
@@ -146,7 +156,7 @@ export default function TabContainer() {
 
     fetchUserDetails();
     fetchAllUsers();
-  }, [approvalStatus]);
+  }, [approvalStatus]); // Dependency on approvalStatus ensures refetching of data on status change
 
   useEffect(() => {
     setActiveTab(0); // Default to Tab 1 (activeTab 0)
@@ -154,29 +164,48 @@ export default function TabContainer() {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 0:
+      case 0: // Logged-in user's tab
         return <Tab1 isEditing={isEditing} handleEditMode={toggleEditMode} />;
-      case 1:
+      case 1: // First invited user's inventory
         return (
           <Tab2
             isEditing={isEditing}
-            userEmail={invitedUsers[0]?.email}
+            userEmail={invitedUsers[0]?.email} // Email of the inventory owner
+            currentLoggedInUserEmail={email} // Current logged-in user's email
             inviterInventory={inviterInventory}
-            userTeamEmails={userTeamEmails} // Pass user team emails to Tab2
+            userTeamEmails={userTeamEmails}
           />
         );
-      case 2:
+      case 2: // Second invited user's inventory
         return (
           <Tab3
             isEditing={isEditing}
-            userEmail={invitedUsers[1]?.email}
+            userEmail={invitedUsers[1]?.email} // Email of the inventory owner
+            currentLoggedInUserEmail={email} // Current logged-in user's email
             secondInvitedInventory={secondInvitedUserInventory}
           />
+        );
+      case 3: // Pending invite or "+" tab
+        return (
+          <div>
+            {isPendingInvite ? (
+              <p>Your invitation to join the team is pending approval.</p>
+            ) : (
+              <p>Locate Invite at: Profile/Invite Team</p>
+            )}
+            <button
+              className="inviteButton"
+              onClick={() => navigate("/seller/invite-team")}
+            >
+              View Invitation Details
+            </button>
+          </div>
         );
       default:
         return null;
     }
   };
+  
 
   const shouldShowEditButton = () => {
     if (userRole === 'admin') {
@@ -242,6 +271,12 @@ export default function TabContainer() {
             {invitedUsers[1]?.username || 'Tab 3'}
           </button>
         )}
+        <button
+          onClick={() => setActiveTab(3)}
+          className={`tab ${activeTab === 3 ? 'active-tab' : ''}`}
+        >
+          {isPendingInvite ? 'Pending Invite' : <FaPlus />}
+        </button>
       </div>
 
       <div className="tab-content">{renderTabContent()}</div>

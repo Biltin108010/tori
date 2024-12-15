@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import supabase from "../../../../backend/supabaseClient";
 import "../tab1/tab1.css";
 
-const Tab3 = ({ userEmail, userTeamEmails }) => {
+const Tab3 = ({ userEmail, userTeamEmails, currentLoggedInUserEmail }) => {
+
   const [items, setItems] = useState([]);
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -13,6 +14,7 @@ const Tab3 = ({ userEmail, userTeamEmails }) => {
   const [navigateToReview, setNavigateToReview] = useState(false);
   const [isApproved, setIsApproved] = useState(null); // New state for approval status
   const navigate = useNavigate();
+  const [cartItemCount, setCartItemCount] = useState(0);
 
   const fetchInventory = async () => {
     setIsSearching(true);
@@ -51,7 +53,41 @@ const Tab3 = ({ userEmail, userTeamEmails }) => {
 
     setIsSearching(false);
   };
-
+  useEffect(() => {
+    const fetchCartItemCount = async () => {
+      if (!currentLoggedInUserEmail) return; // Use currentLoggedInUserEmail instead of userEmail
+      
+      try {
+        // Fetch the count of cart items where the user_prev matches the current user's email
+        const { data: cartItems, error } = await supabase
+          .from("add_cart")
+          .select("id")
+          .eq("user_prev", currentLoggedInUserEmail); // Use currentLoggedInUserEmail
+  
+        if (error) {
+          console.error("Error fetching cart items:", error.message);
+          return;
+        }
+  
+        setCartItemCount(cartItems?.length || 0); // Set the cart item count based on currentLoggedInUserEmail
+      } catch (err) {
+        console.error("Error fetching cart items:", err.message);
+      }
+    };
+  
+    // Fetch the initial count on component mount
+    fetchCartItemCount();
+  
+    // Set up polling every 5 seconds (5000 ms)
+    const intervalId = setInterval(fetchCartItemCount, 5000); // You can adjust the interval time as needed
+  
+    // Cleanup function to clear the interval when the component is unmounted
+    return () => clearInterval(intervalId);
+  }, [currentLoggedInUserEmail]); // Update dependency to currentLoggedInUserEmail
+  
+  
+  
+  
   const checkApprovalStatus = async () => {
     try {
       if (!userEmail) {
@@ -90,138 +126,102 @@ const Tab3 = ({ userEmail, userTeamEmails }) => {
     }
   }, [userEmail]);
 
-  const increaseQuantity = async (id) => {
-    const item = items.find((i) => i.id === id);
 
-    if (item) {
-      try {
-        const { error } = await supabase
-          .from("inventory")
-          .update({ quantity: item.quantity + 1 })
-          .eq("id", id);
-
-        if (error) {
-          console.error("Error increasing quantity:", error.message);
-          setFeedbackMessage("Failed to update quantity. Please try again.");
-          setTimeout(() => setFeedbackMessage(''), 3000);
-          return;
-        }
-
-        fetchInventory(); // Refresh data
-        setFeedbackMessage("Quantity successfully increased!");
-        setTimeout(() => setFeedbackMessage(''), 3000);
-      } catch (err) {
-        console.error("Unexpected error:", err.message);
-        setFeedbackMessage("An unexpected error occurred. Please try again.");
-        setTimeout(() => setFeedbackMessage(''), 3000);
-      }
-    }
-  };
-
-  const decreaseQuantity = async (id) => {
-    const item = items.find((i) => i.id === id);
-
-    if (item && item.quantity > 1) {
-      try {
-        const { error } = await supabase
-          .from("inventory")
-          .update({ quantity: item.quantity - 1 })
-          .eq("id", id);
-
-        if (error) {
-          console.error("Error decreasing quantity:", error.message);
-          setFeedbackMessage("Failed to update quantity. Please try again.");
-          setTimeout(() => setFeedbackMessage(''), 3000);
-          return;
-        }
-
-        fetchInventory();
-        setFeedbackMessage("Quantity successfully decreased!");
-        setTimeout(() => setFeedbackMessage(''), 3000);
-      } catch (err) {
-        console.error("Unexpected error:", err.message);
-        setFeedbackMessage("An unexpected error occurred. Please try again.");
-        setTimeout(() => setFeedbackMessage(''), 3000);
-      }
-    } else {
-      setFeedbackMessage("Quantity cannot be less than 1.");
-      setTimeout(() => setFeedbackMessage(''), 3000);
-    }
-  };
 
   const duplicateItem = async (item) => {
-    if (!userEmail) {
+    if (!currentLoggedInUserEmail) {
       setFeedbackMessage("You must be logged in to duplicate a product.");
       setTimeout(() => setFeedbackMessage(''), 3000);
       return;
     }
-
+  
     try {
       // Fetch the team_num for the logged-in user using the invite column
       const { data: teamData, error: teamError } = await supabase
         .from("team")
         .select("team_num")
-        .eq("invite", userEmail)
+        .eq("invite", currentLoggedInUserEmail) // Use currentLoggedInUserEmail
         .single();
-
-      if (teamError && teamError.code !== 'PGRST116') {
-        // Handle errors that are not "No rows found" (PGRST116)
+  
+      if (teamError && teamError.code !== "PGRST116") {
         console.error("Error fetching team number:", teamError.message);
         setFeedbackMessage("Failed to fetch team information.");
         setTimeout(() => setFeedbackMessage(''), 3000);
         return;
       }
-
+  
       const teamNum = teamData?.team_num || null; // Default to null if no team_num is found
-
+  
       // Check if the item already has the inventory_id
       let inventoryId = item.inventory_id;
-
+  
       if (!inventoryId) {
         const { data: inventoryData, error: inventoryError } = await supabase
           .from("inventory")
           .select("id")
           .eq("name", item.name)
           .single();
-
+  
         if (inventoryError) {
           console.error("Error fetching inventory item:", inventoryError.message);
           setFeedbackMessage("Failed to fetch inventory item.");
           setTimeout(() => setFeedbackMessage(''), 3000);
           return;
         }
-
+  
         inventoryId = inventoryData?.id || null;
-
+  
         if (!inventoryId) {
           setFeedbackMessage("Inventory item not found.");
           setTimeout(() => setFeedbackMessage(''), 3000);
           return;
         }
       }
-
-      // Prepare the duplicated item with the team_num included (or null)
+  
+      // Check for duplicate entries in the add_cart table
+      const { data: duplicateCheck, error: duplicateError } = await supabase
+        .from("add_cart")
+        .select("id")
+        .eq("name", item.name) // Match by name
+        .eq("user_prev", currentLoggedInUserEmail); // Match by user_prev
+  
+      if (duplicateError) {
+        console.error("Error checking for duplicates:", duplicateError.message);
+        setFeedbackMessage("Failed to verify duplicate entries.");
+        setTimeout(() => setFeedbackMessage(''), 3000);
+        return;
+      }
+  
+      if (duplicateCheck && duplicateCheck.length > 0) {
+        // Duplicate exists, provide feedback
+        setFeedbackMessage("Item already exists in the Review Order.");
+        setTimeout(() => setFeedbackMessage(''), 3000);
+        return;
+      }
+  
+      // Prepare the duplicated item
       const duplicatedItem = {
         name: item.name,
         quantity: item.quantity,
         price: item.price,
-        email: userEmail,
-        team_num: teamNum, // Include the team_num or pass null
+        email: item.email, // Original item's owner email
+        user_prev: currentLoggedInUserEmail, // Set user_prev to the logged-in user's email
+        team_num: teamNum, // Include the team_num or null
         created_at: new Date().toISOString(),
         inventory_id: inventoryId,
       };
-
+  
       // Insert the duplicated item into the add_cart table
       const { error } = await supabase.from("add_cart").insert([duplicatedItem]);
-
+  
       if (error) {
         console.error("Error duplicating item:", error.message);
-        setFeedbackMessage("Failed to add item to cart. Please try again.");
+        setFeedbackMessage("Failed to duplicate the item.");
         setTimeout(() => setFeedbackMessage(''), 3000);
         return;
       }
-
-      setFeedbackMessage("Product successfully added to cart!");
+  
+      // Success feedback
       setTimeout(() => setFeedbackMessage(''), 3000);
     } catch (err) {
       console.error("Unexpected error:", err.message);
@@ -229,7 +229,8 @@ const Tab3 = ({ userEmail, userTeamEmails }) => {
       setTimeout(() => setFeedbackMessage(''), 3000);
     }
   };
-
+  
+  
 
 
   const handleNavigateToReview = async () => {
@@ -279,17 +280,28 @@ const Tab3 = ({ userEmail, userTeamEmails }) => {
               />
               <div className="item-text-container">
                 <p className="item-title">{item.name}</p>
-                <p className="item-quantity">Qty: {item.quantity}</p>
+                <p className="item-quantity">
+                  Qty: {item.quantity}
+                  <AiOutlinePlus
+                    className="plus-icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      duplicateItem(item);
+                    }}
+                  />
+                </p>
                 <p className="inv-item-price">Price: ₱{item.price}</p>
-                <AiOutlinePlus
-                  className="plus-icon"
-                  onClick={() => duplicateItem(item)}
-                />
               </div>
             </div>
           ))}
-          <button className="tab1-review-order-button" onClick={handleNavigateToReview}>
+          <button
+            className="tab1-review-order-button"
+            onClick={handleNavigateToReview}
+          >
             Review Order
+            {cartItemCount > 0 && (
+              <span className="notification-bubble">{cartItemCount}</span>
+            )}
           </button>
         </div>
       )}
@@ -297,3 +309,4 @@ const Tab3 = ({ userEmail, userTeamEmails }) => {
   );
 }
 export default Tab3;
+

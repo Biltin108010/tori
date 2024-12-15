@@ -15,86 +15,84 @@ function History() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        // Get the currently authenticated user's email
         const {
           data: { user },
           error: userError,
         } = await supabase.auth.getUser();
-
+    
         if (userError) {
-          console.error('Error fetching user:', userError.message);
+          console.error("Error fetching user:", userError.message);
           return;
         }
-
-        const userEmail = user?.email; // Get the email of the logged-in user
-
+    
+        const userEmail = user?.email;
+    
         if (!userEmail) {
-          console.error('User is not logged in.');
+          console.error("User is not logged in.");
           return;
         }
-
-        // Fetch the user's team number
+    
         const { data: teamData, error: teamError } = await supabase
-          .from('team')
-          .select('invite, team_num') // Ensure team_num is included in the query
-          .eq('invite', userEmail); // You may adjust this to match your data structure
-
+          .from("team")
+          .select("invite, team_num")
+          .eq("invite", userEmail);
+    
         if (teamError) {
-          console.error('Error fetching team data:', teamError.message);
+          console.error("Error fetching team data:", teamError.message);
           return;
         }
-
-        let teamEmails = [userEmail]; // Default to user's own email
+    
+        let teamEmails = [userEmail];
         if (teamData && teamData.length > 0) {
-          // If the user has a team, fetch all team members
-          const userTeamNum = teamData[0]?.team_num; // Get the team number from the data
-          setUserTeamNum(userTeamNum); // Store the team number in state
-
+          const userTeamNum = teamData[0]?.team_num;
+          setUserTeamNum(userTeamNum);
+    
           const { data: teamMembers, error: teamMembersError } = await supabase
-            .from('team')
-            .select('invite')
-            .eq('team_num', userTeamNum); // Query all users in the same team
-
+            .from("team")
+            .select("invite")
+            .eq("team_num", userTeamNum);
+    
           if (teamMembersError) {
-            console.error('Error fetching team members:', teamMembersError.message);
+            console.error("Error fetching team members:", teamMembersError.message);
             return;
           }
-
-          teamEmails = teamMembers.map((member) => member.invite); // Get all user emails in the team
+    
+          teamEmails = teamMembers.map((member) => member.invite);
         }
-
-        // Fetch the history logs for the user or the team
+    
         const { data: historyData, error: historyError } = await supabase
-          .from('audit_logs')
-          .select('name, email, price, quantity, created_at')
-          .in('email', teamEmails) // Pass the array of emails for user/team members
-          .eq('action', 'DEDUCTION');
-
+          .from("audit_logs")
+          .select("name, email, price, quantity, created_at")
+          .in("email", teamEmails)
+          .eq("action", "DEDUCTION");
+    
         if (historyError) {
-          console.error('Error fetching history:', historyError.message);
+          console.error("Error fetching history:", historyError.message);
           return;
         }
-
+    
         if (!Array.isArray(historyData)) {
-          console.error('History data is not an array:', historyData);
+          console.error("History data is not an array:", historyData);
           return;
         }
-
-        // Log the fetched data for debugging purposes
+    
         console.log("Fetched history data:", historyData);
-
-        // Format the data to include computed total price
-        const formattedData = historyData.map((item) => ({
-          ...item,
-          totalPrice: item.price * item.quantity,
-        }));
-
+    
+        // Format and sort the data
+        const formattedData = historyData
+          .map((item) => ({
+            ...item,
+            totalPrice: item.price * item.quantity,
+          }))
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Sort by latest first
+    
         setHistoryData(formattedData);
         setFilteredData(formattedData); // Initialize filtered data
       } catch (err) {
-        console.error('Unexpected error fetching history:', err.message);
+        console.error("Unexpected error fetching history:", err.message);
       }
     };
+    
 
     fetchHistory();
   }, []); // Empty dependency array ensures this runs only once when the component mounts

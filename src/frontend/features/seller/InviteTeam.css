@@ -269,4 +269,15 @@ html, body {
     padding: 5px 10px;
     margin-bottom: 5px;
   }
+  .invite-team-refresh-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    background-color: #fff;
+    z-index: 3;
+  }
 }

@@ -89,6 +89,22 @@ function InviteTeam() {
       setLoading(false);
     }
   };
+
+  const checkIfCartHasPreviewOrder = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("add_cart")
+        .select("user_prev")
+        .eq("user_prev", currentUserEmail); // Check if current user has any preview orders
+    
+      if (error) throw error;
+  
+      return data.length > 0; // If there are preview orders, return true
+    } catch (err) {
+      console.error("Error checking add_cart preview orders:", err.message);
+      return false; // Assume no preview orders in case of an error
+    }
+  };
   
   
 
@@ -121,7 +137,10 @@ const handleInvite = async () => {
     alert("Please enter a valid email.");
     return;
   }
-
+  if (await checkIfCartHasPreviewOrder()) {
+    alert("You cannot invite members while your Preview Order is not cleared.");
+    return;
+  }
   if (emailInput === currentUserEmail) {
     alert("You cannot invite yourself!");
     return;
@@ -274,40 +293,52 @@ const handleInvite = async () => {
 
   // Handle leave team
   const handleLeaveTeam = async () => {
+    if (await checkIfCartHasPreviewOrder()) {
+      alert("You cannot leave the team while your Preview Order is not cleared.");
+      return;
+    }
     try {
       const { error } = await supabase
         .from("team")
         .delete()
         .eq("invite", currentUserEmail)
         .eq("team_num", currentTeamNum);
-
+  
       if (error) throw error;
-
+  
       alert("You have left the team!");
-      fetchTeamData(); // Refresh the table
+      fetchTeamData();
+      navigate(-1); // Navigate back to the previous page
     } catch (err) {
       console.error("Error leaving team:", err.message);
       alert("Failed to leave the team.");
     }
   };
+  
 
   // Handle disband team
   const handleDisbandTeam = async () => {
+    if (await checkIfCartHasPreviewOrder()) {
+      alert("You cannot disband the team while your Preview Order is not cleared.");
+      return;
+    }
     try {
       const { error } = await supabase
         .from("team")
         .delete()
         .eq("team_num", currentTeamNum);
-
+  
       if (error) throw error;
-
+  
       alert("The team has been disbanded!");
-      fetchTeamData(); // Refresh the table
+      fetchTeamData();
+      navigate(-1); // Refresh the table
     } catch (err) {
       console.error("Error disbanding team:", err.message);
       alert("Failed to disband the team.");
     }
   };
+  
 
   return (
     <div className="invite-team-container">
